@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Security.Principal;
 using System.Windows.Forms;
 
 namespace ThunderboltTimeSync {
@@ -19,12 +18,16 @@ namespace ThunderboltTimeSync {
 
 			InitializeComponent();
 
-			Debug.WriteLine(SystemTimeUtils.GetTime().ToString("yyyy-MM-ddTHH:mm:ssK.ffff"));
-			SystemTimeUtils.SetTime(new DateTime(
-				2000, 1, 1,
-				10, 0, 0, 0
-			));
-			Debug.WriteLine(SystemTimeUtils.GetTime().ToString("yyyy-MM-ddTHH:mm:ssK.ffff"));
+			Debug.WriteLine(SystemTimeUtils.GetSystemTime().ToString("yyyy-MM-ddTHH:mm:ssK.ffff"));
+			try {
+				SystemTimeUtils.SetSystemTime(new DateTime(
+					2000, 1, 1,
+					10, 0, 0, 0
+				));
+			} catch (SystemTimeUtils.SystemTimeException stEx) {
+				Debug.WriteLine(string.Format("Setting system time failed: \"{0}\"", stEx.Message));
+			}
+			Debug.WriteLine(SystemTimeUtils.GetSystemTime().ToString("yyyy-MM-ddTHH:mm:ssK.ffff"));
 		}
 	}
 }

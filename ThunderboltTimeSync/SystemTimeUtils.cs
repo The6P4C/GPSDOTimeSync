@@ -1,36 +1,43 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace ThunderboltTimeSync {
 	class SystemTimeUtils {
-		[StructLayout(LayoutKind.Sequential)]
-		private struct SYSTEMTIME {
-			public short wYear;
-			public short wMonth;
-			public short wDayOfWeek;
-			public short wDay;
-			public short wHour;
-			public short wMinute;
-			public short wSecond;
-			public short wMilliseconds;
-		};
+		public class SystemTimeException : Exception {
+			public SystemTimeException(int hresult) : base(string.Format("The system time could not be set (HRESULT 0x{1:X8}).", hresult)) {
+				HResult = hresult;
+			}
+		}
 
-		[DllImport("kernel32.dll")]
-		private static extern uint GetLastError();
+		private class WindowsAPI {
+			[StructLayout(LayoutKind.Sequential)]
+			public struct SYSTEMTIME {
+				public short wYear;
+				public short wMonth;
+				public short wDayOfWeek;
+				public short wDay;
+				public short wHour;
+				public short wMinute;
+				public short wSecond;
+				public short wMilliseconds;
+			};
 
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern bool SetSystemTime(ref SYSTEMTIME lpSystemTime);
+			[DllImport("kernel32.dll")]
+			public static extern int GetLastError();
 
-		[DllImport("kernel32.dll")]
-		private static extern void GetSystemTime(ref SYSTEMTIME lpSystemTime);
+			[DllImport("kernel32.dll", SetLastError = true)]
+			public static extern bool SetSystemTime(ref SYSTEMTIME lpSystemTime);
+
+			[DllImport("kernel32.dll")]
+			public static extern void GetSystemTime(ref SYSTEMTIME lpSystemTime);
+		}
 
 		/// <summary>
 		/// Sets the system time.
 		/// </summary>
 		/// <param name="dateTime">The date and time to set the system clock to.</param>
-		public static void SetTime(DateTime dateTime) {
-			SYSTEMTIME systemTime = new SYSTEMTIME();
+		public static void SetSystemTime(DateTime dateTime) {
+			WindowsAPI.SYSTEMTIME systemTime = new WindowsAPI.SYSTEMTIME();
 
 			systemTime.wYear = (short) dateTime.Year;
 			systemTime.wMonth = (short) dateTime.Month;
@@ -41,10 +48,10 @@ namespace ThunderboltTimeSync {
 			systemTime.wSecond = (short) dateTime.Second;
 			systemTime.wMilliseconds = (short) dateTime.Millisecond;
 
-			bool setSucceeded = SetSystemTime(ref systemTime);
+			bool setSucceeded = WindowsAPI.SetSystemTime(ref systemTime);
 
 			if (!setSucceeded) {
-				Debug.WriteLine(string.Format("Call failed: error = {0}", GetLastError()));
+				throw new SystemTimeException(WindowsAPI.GetLastError());
 			}
 		}
 
@@ -52,9 +59,9 @@ namespace ThunderboltTimeSync {
 		/// Retrieves the current system time.
 		/// </summary>
 		/// <returns>The current system time.</returns>
-		public static DateTime GetTime() {
-			SYSTEMTIME systemTime = new SYSTEMTIME();
-			GetSystemTime(ref systemTime);
+		public static DateTime GetSystemTime() {
+			WindowsAPI.SYSTEMTIME systemTime = new WindowsAPI.SYSTEMTIME();
+			WindowsAPI.GetSystemTime(ref systemTime);
 
 			DateTime systemDateTime = new DateTime(
 				systemTime.wYear, systemTime.wMonth, systemTime.wDay,
