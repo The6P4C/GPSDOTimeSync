@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace ThunderboltTimeSync {
 	class SystemTimeUtils {
 		public class SystemTimeException : Exception {
-			public SystemTimeException(int hresult) : base(string.Format("The system time could not be set (HRESULT 0x{1:X8}).", hresult)) {
+			public SystemTimeException(int hresult) : base(string.Format("The system time could not be set (HRESULT 0x{0:X8}).", hresult)) {
 				HResult = hresult;
 			}
 		}
