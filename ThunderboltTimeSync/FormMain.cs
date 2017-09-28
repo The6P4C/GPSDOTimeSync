@@ -1,5 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Ports;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ThunderboltTimeSync {
@@ -18,16 +20,19 @@ namespace ThunderboltTimeSync {
 
 			InitializeComponent();
 
-			Debug.WriteLine(SystemTimeUtils.GetSystemTime().ToString("yyyy-MM-ddTHH:mm:ssK.ffff"));
-			try {
-				SystemTimeUtils.SetSystemTime(new DateTime(
-					2000, 1, 1,
-					10, 0, 0, 0
-				));
-			} catch (SystemTimeUtils.SystemTimeException stEx) {
-				Debug.WriteLine(string.Format("Setting system time failed: \"{0}\"", stEx.Message));
-			}
-			Debug.WriteLine(SystemTimeUtils.GetSystemTime().ToString("yyyy-MM-ddTHH:mm:ssK.ffff"));
+			ThunderboltSerialPort tbsp = new ThunderboltSerialPort(new SerialPort("COM3"));
+
+			tbsp.PacketReceived += (List<byte> packetBuffer) => {
+				List<string> byteStrings = packetBuffer.Select(x => string.Format("{0:X2}", x)).ToList();
+				Debug.WriteLine(
+					string.Format(
+						"Packet received: {0}",
+						string.Join(" ", byteStrings)
+					)
+				);
+			};
+
+			tbsp.Open();
 		}
 	}
 }
