@@ -1,7 +1,7 @@
 ﻿using System;
-using ThunderboltTimeSync.Devices.Thunderbolt;
+using GPSDOTimeSync.Devices.Thunderbolt;
 
-namespace ThunderboltTimeSync.TimeProviders.Thunderbolt {
+namespace GPSDOTimeSync.TimeProviders.Thunderbolt {
 	class ThunderboltTimeProvider : ITimeProvider {
 		private ThunderboltSerialPort thunderboltSerialPort;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace ThunderboltTimeSync {
+namespace GPSDOTimeSync {
 	class SystemTimeUtils {
 		public class SystemTimeException : Exception {
 			public SystemTimeException(int hresult) : base(string.Format("The system time could not be set (HRESULT 0x{0:X8}).", hresult)) {

@@ -2,7 +2,7 @@
 using System.Security.Principal;
 using System.Windows.Forms;
 
-namespace ThunderboltTimeSync {
+namespace GPSDOTimeSync {
 	static class Program {
 		/// <summary>
 		/// Checks if the application is currently running with administrator privileges.

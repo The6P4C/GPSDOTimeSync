@@ -1,4 +1,4 @@
-﻿namespace ThunderboltTimeSync {
+﻿namespace GPSDOTimeSync {
 	partial class FormMain {
 		/// <summary>
 		/// Required designer variable.
@@ -62,7 +62,7 @@
 			this.Controls.Add(this.statusStrip);
 			this.Controls.Add(this.labelTimestamps);
 			this.Name = "FormMain";
-			this.Text = "Thunderbolt Time Sync";
+			this.Text = "GPSDO Time Sync";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
 			this.statusStrip.ResumeLayout(false);
 			this.statusStrip.PerformLayout();

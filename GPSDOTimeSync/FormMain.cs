@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO.Ports;
 using System.Windows.Forms;
-using ThunderboltTimeSync.Devices.Thunderbolt;
-using ThunderboltTimeSync.TimeProviders;
-using ThunderboltTimeSync.TimeProviders.Thunderbolt;
+using GPSDOTimeSync.Devices.Thunderbolt;
+using GPSDOTimeSync.TimeProviders;
+using GPSDOTimeSync.TimeProviders.Thunderbolt;
 
-namespace ThunderboltTimeSync {
+namespace GPSDOTimeSync {
 	public partial class FormMain : Form {
 		private static readonly Dictionary<LogLevel, Color> LOG_LEVEL_TO_COLOR = new Dictionary<LogLevel, Color>() {
 			{ LogLevel.Info, Color.Black },

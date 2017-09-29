@@ -4,7 +4,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 
-namespace ThunderboltTimeSync.Devices.Thunderbolt {
+namespace GPSDOTimeSync.Devices.Thunderbolt {
 	public class ThunderboltPacket {
 		/// <summary>
 		/// The validity of the packet.

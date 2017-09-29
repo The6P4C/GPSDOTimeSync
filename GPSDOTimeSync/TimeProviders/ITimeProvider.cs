@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThunderboltTimeSync.TimeProviders {
+namespace GPSDOTimeSync.TimeProviders {
 	/// <summary>
 	/// Called when the time provider has a new time and date available.
 	/// </summary>
