@@ -51,14 +51,9 @@ namespace GPSDOTimeSync.TimeProviders.NMEA {
 		}
 	}
 
-	class NMEASerialPort {
+	class NMEASerialPort : SerialPortProcessor {
 		private StringBuilder sentenceBuffer;
 		private bool inSentence;
-
-		private SerialPort serialPort;
-
-		private bool running;
-		private Thread readThread;
 
 		/// <summary>
 		/// A delegate which is used for the <code>SentenceReceived</code> event.
@@ -71,39 +66,9 @@ namespace GPSDOTimeSync.TimeProviders.NMEA {
 		/// </summary>
 		public event SentenceReceivedEventHandler SentenceReceived;
 
-		/// <summary>
-		/// Creates an instance of the NMEASerialPort class, which processes serial data from an NMEA device.
-		/// The serial port passed into the function must not be opened.
-		/// </summary>
-		/// <param name="serialPort">The serial port with which to communicate with the NMEA device.</param>
-		public NMEASerialPort(SerialPort serialPort) {
+		public NMEASerialPort(SerialPort serialPort) : base(serialPort) {
 			sentenceBuffer = new StringBuilder();
 			inSentence = false;
-
-			this.serialPort = serialPort;
-
-			readThread = new Thread(ReadSerialPort);
-			readThread.Name = "NMEASerialPort Read";
-		}
-
-		/// <summary>
-		/// Begins processing serial data and firing SentenceReceived events.
-		/// </summary>
-		public void Open() {
-			running = true;
-
-			serialPort.Open();
-			readThread.Start();
-		}
-
-		/// <summary>
-		/// Stops processing serial data and firing SentenceReceived events.
-		/// </summary>
-		public void Close() {
-			running = false;
-
-			readThread.Join();
-			serialPort.Close();
 		}
 
 		private void ProcessSentence() {
@@ -134,7 +99,7 @@ namespace GPSDOTimeSync.TimeProviders.NMEA {
 			SentenceReceived?.Invoke(new NMEASentence(true, talker, messageType, data, checksum, sentence));
 		}
 
-		private void ProcessByte(byte b) {
+		protected override void ProcessByte(byte b) {
 			char c = (char) b;
 
 			if (inSentence) {
@@ -149,18 +114,6 @@ namespace GPSDOTimeSync.TimeProviders.NMEA {
 			} else {
 				if (c == '$') {
 					inSentence = true;
-				}
-			}
-		}
-
-		private void ReadSerialPort() {
-			while (running) {
-				if (serialPort.BytesToRead > 0) {
-					int possibleCurrentByte = serialPort.ReadByte();
-
-					if (possibleCurrentByte != -1) {
-						ProcessByte((byte) possibleCurrentByte);
-					}
 				}
 			}
 		}
