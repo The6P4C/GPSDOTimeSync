@@ -32,8 +32,7 @@
 			this.buttonStop = new System.Windows.Forms.Button();
 			this.labelDevice = new System.Windows.Forms.Label();
 			this.comboBoxDeviceNames = new System.Windows.Forms.ComboBox();
-			this.labelCurrentTime = new System.Windows.Forms.Label();
-			this.labelCurrentDate = new System.Windows.Forms.Label();
+			this.labelCurrentDateTime = new System.Windows.Forms.Label();
 			this.timerClockDisplayUpdate = new System.Windows.Forms.Timer(this.components);
 			this.labelMaximumCorrection = new System.Windows.Forms.Label();
 			this.checkBoxMaximumCorrectionEnabled = new System.Windows.Forms.CheckBox();
@@ -53,7 +52,7 @@
             this.labelLatestLogMessage});
 			this.statusStrip.Location = new System.Drawing.Point(0, 164);
 			this.statusStrip.Name = "statusStrip";
-			this.statusStrip.Size = new System.Drawing.Size(534, 22);
+			this.statusStrip.Size = new System.Drawing.Size(584, 22);
 			this.statusStrip.SizingGrip = false;
 			this.statusStrip.TabIndex = 1;
 			this.statusStrip.Text = "statusStrip1";
@@ -62,7 +61,7 @@
 			// 
 			this.labelLatestLogMessage.ForeColor = System.Drawing.Color.Black;
 			this.labelLatestLogMessage.Name = "labelLatestLogMessage";
-			this.labelLatestLogMessage.Size = new System.Drawing.Size(519, 17);
+			this.labelLatestLogMessage.Size = new System.Drawing.Size(569, 17);
 			this.labelLatestLogMessage.Spring = true;
 			this.labelLatestLogMessage.Text = "{RUNTIME}";
 			// 
@@ -70,7 +69,7 @@
 			// 
 			this.comboBoxSerialPortNames.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBoxSerialPortNames.FormattingEnabled = true;
-			this.comboBoxSerialPortNames.Location = new System.Drawing.Point(139, 25);
+			this.comboBoxSerialPortNames.Location = new System.Drawing.Point(188, 25);
 			this.comboBoxSerialPortNames.Name = "comboBoxSerialPortNames";
 			this.comboBoxSerialPortNames.Size = new System.Drawing.Size(121, 21);
 			this.comboBoxSerialPortNames.TabIndex = 2;
@@ -78,7 +77,7 @@
 			// labelSerialPortNames
 			// 
 			this.labelSerialPortNames.AutoSize = true;
-			this.labelSerialPortNames.Location = new System.Drawing.Point(136, 9);
+			this.labelSerialPortNames.Location = new System.Drawing.Point(185, 9);
 			this.labelSerialPortNames.Name = "labelSerialPortNames";
 			this.labelSerialPortNames.Size = new System.Drawing.Size(55, 13);
 			this.labelSerialPortNames.TabIndex = 3;
@@ -120,32 +119,20 @@
 			this.comboBoxDeviceNames.FormattingEnabled = true;
 			this.comboBoxDeviceNames.Location = new System.Drawing.Point(12, 25);
 			this.comboBoxDeviceNames.Name = "comboBoxDeviceNames";
-			this.comboBoxDeviceNames.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxDeviceNames.Size = new System.Drawing.Size(170, 21);
 			this.comboBoxDeviceNames.TabIndex = 7;
 			// 
-			// labelCurrentTime
+			// labelCurrentDateTime
 			// 
-			this.labelCurrentTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.labelCurrentDateTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelCurrentTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 30.25F);
-			this.labelCurrentTime.Location = new System.Drawing.Point(266, 9);
-			this.labelCurrentTime.Name = "labelCurrentTime";
-			this.labelCurrentTime.Size = new System.Drawing.Size(256, 50);
-			this.labelCurrentTime.TabIndex = 8;
-			this.labelCurrentTime.Text = "{RUNTIME}";
-			this.labelCurrentTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// labelCurrentDate
-			// 
-			this.labelCurrentDate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelCurrentDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 30.25F);
-			this.labelCurrentDate.Location = new System.Drawing.Point(266, 59);
-			this.labelCurrentDate.Name = "labelCurrentDate";
-			this.labelCurrentDate.Size = new System.Drawing.Size(256, 50);
-			this.labelCurrentDate.TabIndex = 9;
-			this.labelCurrentDate.Text = "{RUNTIME}";
-			this.labelCurrentDate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelCurrentDateTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 30.25F);
+			this.labelCurrentDateTime.Location = new System.Drawing.Point(315, 9);
+			this.labelCurrentDateTime.Name = "labelCurrentDateTime";
+			this.labelCurrentDateTime.Size = new System.Drawing.Size(257, 142);
+			this.labelCurrentDateTime.TabIndex = 9;
+			this.labelCurrentDateTime.Text = "{RUNTIME}";
+			this.labelCurrentDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// timerClockDisplayUpdate
 			// 
@@ -224,7 +211,7 @@
 			this.numericUpDownMimimumUpdateInterval.Size = new System.Drawing.Size(47, 20);
 			this.numericUpDownMimimumUpdateInterval.TabIndex = 16;
 			this.numericUpDownMimimumUpdateInterval.Value = new decimal(new int[] {
-            5,
+            15,
             0,
             0,
             0});
@@ -242,7 +229,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(534, 186);
+			this.ClientSize = new System.Drawing.Size(584, 186);
 			this.Controls.Add(this.labelMinimumUpdateIntervalSeconds);
 			this.Controls.Add(this.numericUpDownMimimumUpdateInterval);
 			this.Controls.Add(this.labelMinimumUpdateInterval);
@@ -250,8 +237,7 @@
 			this.Controls.Add(this.comboBoxMaximumCorrectionUnit);
 			this.Controls.Add(this.checkBoxMaximumCorrectionEnabled);
 			this.Controls.Add(this.labelMaximumCorrection);
-			this.Controls.Add(this.labelCurrentDate);
-			this.Controls.Add(this.labelCurrentTime);
+			this.Controls.Add(this.labelCurrentDateTime);
 			this.Controls.Add(this.comboBoxDeviceNames);
 			this.Controls.Add(this.labelDevice);
 			this.Controls.Add(this.buttonStop);
@@ -259,7 +245,8 @@
 			this.Controls.Add(this.labelSerialPortNames);
 			this.Controls.Add(this.comboBoxSerialPortNames);
 			this.Controls.Add(this.statusStrip);
-			this.MinimumSize = new System.Drawing.Size(550, 225);
+			this.MaximumSize = new System.Drawing.Size(600, 225);
+			this.MinimumSize = new System.Drawing.Size(600, 225);
 			this.Name = "FormMain";
 			this.Text = "GPSDO Time Sync";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
@@ -279,10 +266,7 @@
 		private System.Windows.Forms.Label labelSerialPortNames;
 		private System.Windows.Forms.Button buttonStart;
 		private System.Windows.Forms.Button buttonStop;
-		private System.Windows.Forms.Label labelDevice;
-		private System.Windows.Forms.ComboBox comboBoxDeviceNames;
-		private System.Windows.Forms.Label labelCurrentTime;
-		private System.Windows.Forms.Label labelCurrentDate;
+		private System.Windows.Forms.Label labelCurrentDateTime;
 		private System.Windows.Forms.Timer timerClockDisplayUpdate;
 		private System.Windows.Forms.Label labelMaximumCorrection;
 		private System.Windows.Forms.CheckBox checkBoxMaximumCorrectionEnabled;
@@ -291,6 +275,8 @@
 		private System.Windows.Forms.Label labelMinimumUpdateInterval;
 		private System.Windows.Forms.NumericUpDown numericUpDownMimimumUpdateInterval;
 		private System.Windows.Forms.Label labelMinimumUpdateIntervalSeconds;
+		private System.Windows.Forms.ComboBox comboBoxDeviceNames;
+		private System.Windows.Forms.Label labelDevice;
 	}
 }
 

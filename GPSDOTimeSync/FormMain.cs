@@ -179,8 +179,7 @@ namespace GPSDOTimeSync {
 
 		private void timerClockDisplayUpdate_Tick(object sender, EventArgs e) {
 			DateTime systemTime = SystemTimeUtils.GetSystemTime();
-			labelCurrentTime.Text = systemTime.ToString("HH:mm:ss");
-			labelCurrentDate.Text = systemTime.ToString("dd\\/MM\\/yyyy");
+			labelCurrentDateTime.Text = systemTime.ToString("HH:mm:ss\ndd\\/MM\\/yyyy\nUTC");
 		}
 	}
 
