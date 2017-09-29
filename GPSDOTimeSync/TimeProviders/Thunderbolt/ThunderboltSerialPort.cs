@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO.Ports;
-using System.Linq;
 using System.Threading;
 
 namespace GPSDOTimeSync.Devices.Thunderbolt {
@@ -130,9 +128,6 @@ namespace GPSDOTimeSync.Devices.Thunderbolt {
 		}
 
 		private void ProcessPacket() {
-			List<string> byteStrings = packetBuffer.Select(x => string.Format("{0:X2}", x)).ToList();
-			Debug.WriteLine(string.Join(" ", byteStrings));
-
 			byte id = packetBuffer[1];
 
 			// Grab only the data - not the first [DLE]<id> or the last [DLE][ETX]

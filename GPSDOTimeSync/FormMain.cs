@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using GPSDOTimeSync.Devices.Thunderbolt;
 using GPSDOTimeSync.TimeProviders;
 using GPSDOTimeSync.TimeProviders.Thunderbolt;
-using System.Diagnostics;
 
 namespace GPSDOTimeSync {
 	public partial class FormMain : Form {
