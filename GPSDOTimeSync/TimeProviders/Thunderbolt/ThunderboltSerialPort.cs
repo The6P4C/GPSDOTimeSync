@@ -73,6 +73,7 @@ namespace GPSDOTimeSync.Devices.Thunderbolt {
 			this.serialPort = serialPort;
 
 			readThread = new Thread(ReadSerialPort);
+			readThread.Name = "ThunderboltSerialPort Read";
 		}
 
 		/// <summary>
@@ -201,12 +202,14 @@ namespace GPSDOTimeSync.Devices.Thunderbolt {
 
 		private void ReadSerialPort() {
 			while (running) {
-				int possibleCurrentByte = serialPort.ReadByte();
+				if (serialPort.BytesToRead > 0) {
+					int possibleCurrentByte = serialPort.ReadByte();
 
-				if (possibleCurrentByte != -1) {
-					// Once we're sure the byte that was read wasn't -1 (which signifies the end of the read), we're safe to cast to a byte
-					ProcessByte((byte) possibleCurrentByte);
-				}
+					if (possibleCurrentByte != -1) {
+						// Once we're sure the byte that was read wasn't -1 (which signifies the end of the read), we're safe to cast to a byte
+						ProcessByte((byte) possibleCurrentByte);
+					}
+				}				
 			}
 		}
 	}

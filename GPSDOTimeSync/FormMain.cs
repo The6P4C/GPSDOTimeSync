@@ -15,6 +15,18 @@ namespace GPSDOTimeSync {
 			{ LogLevel.Error, Color.Red }
 		};
 
+		private static readonly Dictionary<string, Func<SerialPort, ITimeProvider>> TIME_PROVIDER_CONSTRUCTORS = new Dictionary<string, Func<SerialPort, ITimeProvider>>() {
+			{
+				"Trimble Thunderbolt",
+				new Func<SerialPort, ITimeProvider>((serialPort) => {
+					ThunderboltSerialPort thunderboltSerialPort = new ThunderboltSerialPort(serialPort);
+					ITimeProvider timeProvider = new ThunderboltTimeProvider(thunderboltSerialPort);
+
+					return timeProvider;
+				})
+			}
+		};
+
 		private ITimeProvider timeProvider;
 
 		public FormMain() {
@@ -30,15 +42,50 @@ namespace GPSDOTimeSync {
 			//     Quit
 
 			InitializeComponent();
+			PopulateDropDowns();
 
+			statusStrip.Renderer = new TruncatedTextEllipsisRenderer();
 			latestLogMessage.Text = "";
+		}
 
-			ThunderboltSerialPort thunderboltSerialPort = new ThunderboltSerialPort(new SerialPort("COM3"));
-			timeProvider = new ThunderboltTimeProvider(thunderboltSerialPort);
+		private void PopulateDropDowns() {
+			foreach (string portName in SerialPort.GetPortNames()) {
+				serialPortNames.Items.Add(portName);
+			}
+
+			if (serialPortNames.Items.Count > 0) {
+				serialPortNames.SelectedIndex = 0;
+			}
+
+			foreach (string deviceName in TIME_PROVIDER_CONSTRUCTORS.Keys) {
+				deviceNames.Items.Add(deviceName);
+			}
+
+			if (deviceNames.Items.Count > 0) {
+				deviceNames.SelectedIndex = 0;
+			}
+		}
+
+		private void AddMessageToLog(string message, LogLevel logLevel) {
+			latestLogMessage.Text = string.Format("{0} ({1})", message, DateTime.Now.ToString("G"));
+			latestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
+		}
+
+		private void start_Click(object sender, EventArgs e) {
+			string serialPortName = (string) serialPortNames.SelectedItem;
+			string deviceName = (string) deviceNames.SelectedItem;
+
+			SerialPort serialPort = new SerialPort(serialPortName);		
+			timeProvider = TIME_PROVIDER_CONSTRUCTORS[deviceName](serialPort);
 
 			timeProvider.TimeAvailable += (DateTime dateTime) => {
 				Invoke(new Action(() => {
-					labelTimestamps.Text += string.Format("{0} {1}\n", dateTime.ToLongDateString(), dateTime.ToLongTimeString());
+					AddMessageToLog(
+						string.Format(
+								"Time is {0} {1}",
+								dateTime.ToLongDateString(), dateTime.ToLongTimeString()
+						), LogLevel.Info
+					);
 				}));
 			};
 
@@ -49,15 +96,34 @@ namespace GPSDOTimeSync {
 			};
 
 			timeProvider.Start();
+
+			AddMessageToLog("Time sync started.", LogLevel.Info);
+
+			start.Enabled = false;
+			stop.Enabled = true;
 		}
 
-		private void AddMessageToLog(string message, LogLevel logLevel) {
-			latestLogMessage.Text = string.Format("{0} ({1})", message, DateTime.Now.ToString("G"));
-			latestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
+		private void stop_Click(object sender, EventArgs e) {
+			timeProvider.Stop();
+
+			AddMessageToLog("Time sync stopped.", LogLevel.Info);
+
+			stop.Enabled = false;
+			start.Enabled = true;
 		}
 
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
-			timeProvider.Stop();
+			timeProvider?.Stop();
+		}
+	}
+
+	public class TruncatedTextEllipsisRenderer : ToolStripProfessionalRenderer {
+		protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e) {
+			if (e.Item is ToolStripStatusLabel) {
+				TextRenderer.DrawText(e.Graphics, e.Text, e.TextFont, e.TextRectangle, e.TextColor, Color.Transparent, e.TextFormat | TextFormatFlags.EndEllipsis);
+			} else {
+				base.OnRenderItemText(e);
+			}
 		}
 	}
 }
