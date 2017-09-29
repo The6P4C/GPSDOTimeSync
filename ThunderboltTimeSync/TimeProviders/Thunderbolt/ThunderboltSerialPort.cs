@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Linq;
+using System.Threading;
 
-namespace ThunderboltTimeSync {
+namespace ThunderboltTimeSync.Devices.Thunderbolt {
 	public class ThunderboltPacket {
 		/// <summary>
 		/// The validity of the packet.
@@ -45,6 +47,9 @@ namespace ThunderboltTimeSync {
 
 		private SerialPort serialPort;
 
+		private bool running;
+		private Thread readThread;
+
 		/// <summary>
 		/// A delegate which is called when a full packet is received over the serial port.
 		/// </summary>
@@ -58,7 +63,7 @@ namespace ThunderboltTimeSync {
 
 		/// <summary>
 		/// Creates an instance of the ThunderboltSerialPort class, which processes serial data from a Thunderbolt and 
-		/// The serial port passed into the function must not be opened, or have a delegate already attached to the DataReceived event.
+		/// The serial port passed into the function must not be opened.
 		/// </summary>
 		/// <param name="serialPort">The serial port on which to communicate with the Thunderbolt.</param>
 		public ThunderboltSerialPort(SerialPort serialPort) {
@@ -66,14 +71,28 @@ namespace ThunderboltTimeSync {
 			inPacket = false;
 
 			this.serialPort = serialPort;
-			serialPort.DataReceived += DataReceived;
+
+			readThread = new Thread(ReadSerialPort);
 		}
 
 		/// <summary>
-		/// Begins processing serial data.
+		/// Begins processing serial data and firing PacketReceived events.
 		/// </summary>
 		public void Open() {
+			running = true;
+
 			serialPort.Open();
+			readThread.Start();
+		}
+
+		/// <summary>
+		/// Stops processing serial data and firing PacketReceived events.
+		/// </summary>
+		public void Close() {
+			running = false;
+
+			readThread.Join();
+			serialPort.Close();
 		}
 
 		/// <summary>
@@ -110,6 +129,9 @@ namespace ThunderboltTimeSync {
 		}
 
 		private void ProcessPacket() {
+			List<string> byteStrings = packetBuffer.Select(x => string.Format("{0:X2}", x)).ToList();
+			Debug.WriteLine(string.Join(" ", byteStrings));
+
 			byte id = packetBuffer[1];
 
 			// Grab only the data - not the first [DLE]<id> or the last [DLE][ETX]
@@ -131,43 +153,55 @@ namespace ThunderboltTimeSync {
 		// to bring the decoder back into sync with the true packets. It's probably only an issue when the Thunderbolt is initially plugged in,
 		// as that's probably the only time we'd see malformed packets on the serial port, since we could connect in the middle of a packet.
 		// Consider if this is really an issue, and think of a better way of decoding the packets to avoid this.
-		private void DataReceived(object sender, SerialDataReceivedEventArgs e) {
-			int possibleCurrentByte;
+		private void ReadSerialPort() {
+			while (running) {
+				int possibleCurrentByte = serialPort.ReadByte();
+				if (possibleCurrentByte != -1) {
+					// There aren't any packets this long, but during a corrupted or malformed packet the buffer can get quite large before the error
+					// is fixed somehow. To prevent the almost 20 second delay between time packets that can be caused by some malformed packets,
+					// just reset everything if the buffer's getting too long.
+					// We should make sure the user knows, so send a invalid packet to them.
+					if (packetBuffer.Count >= 128) {
+						packetBuffer.Clear();
+						inPacket = false;
 
-			while ((possibleCurrentByte = serialPort.ReadByte()) != -1) {
-				// Once we're sure the byte that was read wasn't -1 (which signifies the end of the read), we're safe to cast to a byte
-				byte currentByte = (byte) possibleCurrentByte;
-
-				if (inPacket) {
-					packetBuffer.Add(currentByte);
-
-					// Check buffer length to ensure we've reached a plausible end of packet.
-					// 5 bytes is [DLE]<id><1 byte of data>[DLE][ETX]
-					// Must check if previous character is a [DLE], otherwise an ETX with a malformed and unstuffed [DLE] will cause issues
-					if (currentByte == CHAR_ETX && packetBuffer.Count >= 5 && packetBuffer[packetBuffer.Count - 2] == CHAR_DLE) {
-						int numberOfPrecedingDLEs = 0;
-
-						// Count number of DLEs, excluding the first two bytes (initial DLE and id)
-						for (int i = 2; i < packetBuffer.Count; ++i) {
-							if (packetBuffer[i] == CHAR_DLE) {
-								++numberOfPrecedingDLEs;
-							}
-						}
-
-						// Odd number (greater than zero) of DLEs means the ETX does in fact signify the end of the packet
-						if (numberOfPrecedingDLEs % 2 == 1 && numberOfPrecedingDLEs > 0) {
-							ProcessPacket();
-
-							packetBuffer.Clear();
-							inPacket = false;
-						}
+						PacketReceived?.Invoke(new ThunderboltPacket(false, 0, new List<byte>(), new List<byte>()));
 					}
-				} else {
-					// A DLE received when not currently in a packet signifies the beginning of a packet
-					if (currentByte == CHAR_DLE) {
+
+					// Once we're sure the byte that was read wasn't -1 (which signifies the end of the read), we're safe to cast to a byte
+					byte currentByte = (byte) possibleCurrentByte;
+
+					if (inPacket) {
 						packetBuffer.Add(currentByte);
 
-						inPacket = true;
+						// Check buffer length to ensure we've reached a plausible end of packet.
+						// 5 bytes is [DLE]<id><1 byte of data>[DLE][ETX]
+						// Must check if previous character is a [DLE], otherwise an ETX with a malformed and unstuffed [DLE] will cause issues
+						if (currentByte == CHAR_ETX && packetBuffer.Count >= 5 && packetBuffer[packetBuffer.Count - 2] == CHAR_DLE) {
+							int numberOfPrecedingDLEs = 0;
+
+							// Count number of DLEs, excluding the first two bytes (initial DLE and id)
+							for (int i = 2; i < packetBuffer.Count; ++i) {
+								if (packetBuffer[i] == CHAR_DLE) {
+									++numberOfPrecedingDLEs;
+								}
+							}
+
+							// Odd number (greater than zero) of DLEs means the ETX does in fact signify the end of the packet
+							if (numberOfPrecedingDLEs % 2 == 1 && numberOfPrecedingDLEs > 0) {
+								ProcessPacket();
+
+								packetBuffer.Clear();
+								inPacket = false;
+							}
+						}
+					} else {
+						// A DLE received when not currently in a packet signifies the beginning of a packet
+						if (currentByte == CHAR_DLE) {
+							packetBuffer.Add(currentByte);
+
+							inPacket = true;
+						}
 					}
 				}
 			}

@@ -1,10 +1,22 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO.Ports;
 using System.Windows.Forms;
+using ThunderboltTimeSync.Devices.Thunderbolt;
+using ThunderboltTimeSync.TimeProviders;
+using ThunderboltTimeSync.TimeProviders.Thunderbolt;
 
 namespace ThunderboltTimeSync {
 	public partial class FormMain : Form {
+		private static readonly Dictionary<LogLevel, Color> LOG_LEVEL_TO_COLOR = new Dictionary<LogLevel, Color>() {
+			{ LogLevel.Info, Color.Black },
+			{ LogLevel.Warning, Color.Yellow },
+			{ LogLevel.Error, Color.Red }
+		};
+
+		private ITimeProvider timeProvider;
+
 		public FormMain() {
 			// Check for admin rights
 			// If running as admin:
@@ -19,31 +31,29 @@ namespace ThunderboltTimeSync {
 
 			InitializeComponent();
 
-			ThunderboltSerialPort tbsp = new ThunderboltSerialPort(new SerialPort("COM8"));
+			latestLogMessage.Text = "";
 
-			tbsp.PacketReceived += (ThunderboltPacket packet) => {
-				if (packet.IsPacketValid) {
-					if (packet.ID == 0x8F && packet.Data.Count == 17 && packet.Data[0] == 0xAB) {
-						int timeOfWeek = packet.Data[1] << 24 | packet.Data[2] << 16 | packet.Data[3] << 8 | packet.Data[4];
-						ushort weekNumber = (ushort) (packet.Data[5] << 8 | packet.Data[6]);
-						short utcOffset = (short) (packet.Data[7] << 8 | packet.Data[8]);
+			ThunderboltSerialPort thunderboltSerialPort = new ThunderboltSerialPort(new SerialPort("COM3"));
+			timeProvider = new ThunderboltTimeProvider(thunderboltSerialPort);
 
-						// Current epoch for GPS week numbers is the morning of 22/8/1999
-						DateTime dateTime = new DateTime(1999, 8, 22, 0, 0, 0);
-
-						dateTime = dateTime.AddDays(7 * weekNumber);
-						dateTime = dateTime.AddSeconds(timeOfWeek);
-
-						dateTime = dateTime.AddSeconds(-utcOffset);
-
-						labelTimestamps.Invoke(new Action(() => {
-							labelTimestamps.Text += string.Format("{0} {1}\n", dateTime.ToLongDateString(), dateTime.ToLongTimeString());
-						}));
-					}
-				}
+			timeProvider.TimeAvailable += (DateTime dateTime) => {
+				Invoke(new Action(() => {
+					labelTimestamps.Text += string.Format("{0} {1} @ {2}\n", dateTime.ToLongDateString(), dateTime.ToLongTimeString(), DateTime.Now.ToLongTimeString());
+				}));
 			};
 
-			tbsp.Open();
+			timeProvider.Log += (string message, LogLevel logLevel) => {
+				Invoke(new Action(() => {
+					latestLogMessage.Text = message;
+					latestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
+				}));
+			};
+
+			timeProvider.Start();
+		}
+
+		private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
+			timeProvider.Stop();
 		}
 	}
 }
