@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Ports;
-using System.Threading;
 
-namespace GPSDOTimeSync.Devices.Thunderbolt {
+namespace GPSDOTimeSync.TimeProviders.Thunderbolt {
 	public class ThunderboltPacket {
 		/// <summary>
 		/// The validity of the packet.

@@ -1,5 +1,4 @@
 ﻿using System;
-using GPSDOTimeSync.Devices.Thunderbolt;
 
 namespace GPSDOTimeSync.TimeProviders.Thunderbolt {
 	class ThunderboltTimeProvider : ITimeProvider {

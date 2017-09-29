@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace GPSDOTimeSync.TimeProviders.NMEA {
 	class NMEATimeProvider : ITimeProvider {
