@@ -6,6 +6,9 @@ using System.Windows.Forms;
 using GPSDOTimeSync.Devices.Thunderbolt;
 using GPSDOTimeSync.TimeProviders;
 using GPSDOTimeSync.TimeProviders.Thunderbolt;
+using GPSDOTimeSync.TimeProviders.NMEA;
+using System.Diagnostics;
+using System.Linq;
 
 namespace GPSDOTimeSync {
 	public partial class FormMain : Form {
@@ -21,6 +24,15 @@ namespace GPSDOTimeSync {
 				new Func<SerialPort, ITimeProvider>((serialPort) => {
 					ThunderboltSerialPort thunderboltSerialPort = new ThunderboltSerialPort(serialPort);
 					ITimeProvider timeProvider = new ThunderboltTimeProvider(thunderboltSerialPort);
+
+					return timeProvider;
+				})
+			},
+			{
+				"NMEA Device (e.g. BG7TBL GPSDO)",
+				new Func<SerialPort, ITimeProvider>((serialPort) => {
+					NMEASerialPort nmeaSerialPort = new NMEASerialPort(serialPort);
+					ITimeProvider timeProvider = new NMEATimeProvider(nmeaSerialPort);
 
 					return timeProvider;
 				})
