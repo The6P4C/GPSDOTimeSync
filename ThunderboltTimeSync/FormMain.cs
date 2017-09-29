@@ -22,14 +22,19 @@ namespace ThunderboltTimeSync {
 
 			ThunderboltSerialPort tbsp = new ThunderboltSerialPort(new SerialPort("COM3"));
 
-			tbsp.PacketReceived += (List<byte> packetBuffer) => {
-				List<string> byteStrings = packetBuffer.Select(x => string.Format("{0:X2}", x)).ToList();
-				Debug.WriteLine(
-					string.Format(
-						"Packet received: {0}",
-						string.Join(" ", byteStrings)
-					)
-				);
+			tbsp.PacketReceived += (ThunderboltPacket packet) => {
+				if (packet.IsPacketValid) {
+					List<string> dataByteStrings = packet.Data.Select(x => string.Format("{0:X2}", x)).ToList();
+					List<string> rawDataByteStrings = packet.RawData.Select(x => string.Format("{0:X2}", x)).ToList();
+					Debug.WriteLine(
+						string.Format(
+							"Received packet: ID: {0:X2}, Data: {1}, Raw Data: {2}",
+							packet.ID, string.Join(" ", dataByteStrings), string.Join(" ", rawDataByteStrings)
+						)
+					);
+				} else {
+					Debug.WriteLine("Received invalid packet.");
+				}
 			};
 
 			tbsp.Open();
