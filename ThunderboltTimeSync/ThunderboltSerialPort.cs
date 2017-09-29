@@ -26,7 +26,7 @@ namespace ThunderboltTimeSync {
 		/// </summary>
 		public List<byte> RawData { get; }
 
-		protected ThunderboltPacket(bool isPacketValid, byte id, List<byte> data, List<byte> rawData) {
+		public ThunderboltPacket(bool isPacketValid, byte id, List<byte> data, List<byte> rawData) {
 			IsPacketValid = isPacketValid;
 
 			ID = id;
