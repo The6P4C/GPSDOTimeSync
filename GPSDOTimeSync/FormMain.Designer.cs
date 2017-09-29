@@ -62,7 +62,7 @@
 			// 
 			this.labelLatestLogMessage.ForeColor = System.Drawing.Color.Black;
 			this.labelLatestLogMessage.Name = "labelLatestLogMessage";
-			this.labelLatestLogMessage.Size = new System.Drawing.Size(488, 17);
+			this.labelLatestLogMessage.Size = new System.Drawing.Size(519, 17);
 			this.labelLatestLogMessage.Spring = true;
 			this.labelLatestLogMessage.Text = "{RUNTIME}";
 			// 
@@ -224,7 +224,7 @@
 			this.numericUpDownMimimumUpdateInterval.Size = new System.Drawing.Size(47, 20);
 			this.numericUpDownMimimumUpdateInterval.TabIndex = 16;
 			this.numericUpDownMimimumUpdateInterval.Value = new decimal(new int[] {
-            1,
+            5,
             0,
             0,
             0});
