@@ -93,10 +93,10 @@ namespace GPSDOTimeSync {
 					return;
 				}
 
-				if (checkBoxMaximumCorrectionEnabled.Checked) {
-					// Positive error means system clock is ahead, negative error means system clock is behind
-					TimeSpan error = SystemTimeUtils.GetSystemTime().Subtract(dateTime).Duration();
+				// Positive error means system clock is ahead, negative error means system clock is behind
+				TimeSpan error = SystemTimeUtils.GetSystemTime().Subtract(dateTime).Duration();
 
+				if (checkBoxMaximumCorrectionEnabled.Checked) {
 					TimeSpan maximumCorrection = new TimeSpan();
 					int maximumCorrectionValue = (int) numericUpDownMaximumCorrection.Value;
 					string maximumCorrectionUnit = "";
@@ -125,13 +125,10 @@ namespace GPSDOTimeSync {
 				SystemTimeUtils.SetSystemTime(dateTime);
 
 				Invoke(new Action(() => {
-					AddMessageToLog(
-						string.Format(
-							"System time set to {0}.",
-							dateTime.ToString("HH:mm:ss dd\\/MM\\/yyyy")
-						),
-						LogLevel.Info
-					);
+					AddMessageToLog(string.Format(
+						"System time set to {0} ({1}).",
+						dateTime.ToString("HH:mm:ss dd\\/MM\\/yyyy"), error.ToString()
+					), LogLevel.Info);
 				}));
 
 				lastSystemTimeUpdate = Environment.TickCount;
