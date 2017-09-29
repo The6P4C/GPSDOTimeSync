@@ -127,6 +127,10 @@ namespace ThunderboltTimeSync {
 			PacketReceived?.Invoke(packet);
 		}
 
+		// TODO: Improve this? Currently, if a malformed packet comes in it can take many more packets (totalling up to almost 5 to 10 seconds of time)
+		// to bring the decoder back into sync with the true packets. It's probably only an issue when the Thunderbolt is initially plugged in,
+		// as that's probably the only time we'd see malformed packets on the serial port, since we could connect in the middle of a packet.
+		// Consider if this is really an issue, and think of a better way of decoding the packets to avoid this.
 		private void DataReceived(object sender, SerialDataReceivedEventArgs e) {
 			int possibleCurrentByte;
 
