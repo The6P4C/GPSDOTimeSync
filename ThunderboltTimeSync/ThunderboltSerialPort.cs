@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 
 namespace ThunderboltTimeSync {
@@ -85,6 +86,8 @@ namespace ThunderboltTimeSync {
 
 			bool inStuffedDLE = false;
 			foreach (byte b in data) {
+				Debug.WriteLine(string.Format("{0:X2}", b));
+
 				if (b == CHAR_DLE) {
 					if (!inStuffedDLE) {
 						newData.Add(b);
@@ -148,8 +151,8 @@ namespace ThunderboltTimeSync {
 							}
 						}
 
-						// Odd number of DLEs means the ETX does in fact signify the end of the packet
-						if (numberOfPrecedingDLEs % 2 == 1) {
+						// Odd number (greater than zero) of DLEs means the ETX does in fact signify the end of the packet
+						if (numberOfPrecedingDLEs % 2 == 1 && numberOfPrecedingDLEs > 0) {
 							ProcessPacket();
 
 							packetBuffer.Clear();
