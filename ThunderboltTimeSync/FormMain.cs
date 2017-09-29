@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO.Ports;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace ThunderboltTimeSync {
@@ -20,13 +19,26 @@ namespace ThunderboltTimeSync {
 
 			InitializeComponent();
 
-			ThunderboltSerialPort tbsp = new ThunderboltSerialPort(new SerialPort("COM3"));
+			ThunderboltSerialPort tbsp = new ThunderboltSerialPort(new SerialPort("COM8"));
 
 			tbsp.PacketReceived += (ThunderboltPacket packet) => {
 				if (packet.IsPacketValid) {
 					if (packet.ID == 0x8F && packet.Data.Count == 17 && packet.Data[0] == 0xAB) {
-						ushort year = (ushort) (packet.Data[15] << 8 | packet.Data[16]);
-						Debug.WriteLine(year);
+						int timeOfWeek = packet.Data[1] << 24 | packet.Data[2] << 16 | packet.Data[3] << 8 | packet.Data[4];
+						ushort weekNumber = (ushort) (packet.Data[5] << 8 | packet.Data[6]);
+						short utcOffset = (short) (packet.Data[7] << 8 | packet.Data[8]);
+
+						// Current epoch for GPS week numbers is the morning of 22/8/1999
+						DateTime dateTime = new DateTime(1999, 8, 22, 0, 0, 0);
+
+						dateTime = dateTime.AddDays(7 * weekNumber);
+						dateTime = dateTime.AddSeconds(timeOfWeek);
+
+						dateTime = dateTime.AddSeconds(-utcOffset);
+
+						labelTimestamps.Invoke(new Action(() => {
+							labelTimestamps.Text += string.Format("{0} {1}\n", dateTime.ToLongDateString(), dateTime.ToLongTimeString());
+						}));
 					}
 				}
 			};
