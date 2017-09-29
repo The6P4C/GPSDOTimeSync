@@ -42,9 +42,14 @@ namespace GPSDOTimeSync {
 		private int lastSystemTimeUpdate;
 		private ITimeProvider timeProvider;
 
+		Properties.Settings settings;
+
 		public FormMain() {
 			InitializeComponent();
 			PopulateDropDowns();
+
+			settings = Properties.Settings.Default;
+			LoadSettings();
 
 			lastSystemTimeUpdate = 0;
 
@@ -146,7 +151,7 @@ namespace GPSDOTimeSync {
 			string serialPortName = (string) comboBoxSerialPortNames.SelectedItem;
 			string deviceName = (string) comboBoxDeviceNames.SelectedItem;
 
-			SerialPort serialPort = new SerialPort(serialPortName);		
+			SerialPort serialPort = new SerialPort(serialPortName);
 			timeProvider = TIME_PROVIDER_CONSTRUCTORS[deviceName](serialPort);
 
 			ConfigureTimeProvider();
@@ -181,6 +186,75 @@ namespace GPSDOTimeSync {
 			DateTime systemTime = SystemTimeUtils.GetSystemTime();
 			labelCurrentDateTime.Text = systemTime.ToString("HH:mm:ss\ndd\\/MM\\/yyyy\nUTC");
 		}
+
+		#region Settings Management
+		private int GetIndexOfComboBoxStringItem(ComboBox comboBox, string itemText) {
+			for (int i = 0; i < comboBox.Items.Count; ++i) {
+				if ((string) comboBox.Items[i] == itemText) {
+					return i;
+				}
+			}
+
+			return 0;
+		}
+
+		private void LoadSettings() {
+			// Populate values
+			comboBoxDeviceNames.SelectedIndex = GetIndexOfComboBoxStringItem(comboBoxDeviceNames, settings.deviceName);
+			comboBoxSerialPortNames.SelectedIndex = GetIndexOfComboBoxStringItem(comboBoxSerialPortNames, settings.serialPortName);
+
+			checkBoxMaximumCorrectionEnabled.Checked = settings.maximumCorrectionEnabled;
+			numericUpDownMaximumCorrection.Value = settings.maximumCorrection;
+			comboBoxMaximumCorrectionUnit.SelectedIndex = GetIndexOfComboBoxStringItem(comboBoxMaximumCorrectionUnit, settings.maximumCorrectionUnit);
+
+			numericUpDownMimimumUpdateInterval.Value = settings.minimumUpdateInterval;
+
+			// Add event listeners
+			comboBoxDeviceNames.SelectedIndexChanged += comboBoxDeviceNames_SelectedIndexChanged_UpdateSettings;
+			comboBoxSerialPortNames.SelectedIndexChanged += comboBoxSerialPortNames_SelectedIndexChanged_UpdateSettings;
+
+			checkBoxMaximumCorrectionEnabled.CheckedChanged += checkBoxMaximumCorrectionEnabled_CheckedChanged_UpdateSettings;
+			numericUpDownMaximumCorrection.ValueChanged += numericUpDownMaximumCorrection_ValueChanged_UpdateSettings;
+			comboBoxMaximumCorrectionUnit.SelectedIndexChanged += comboBoxMaximumCorrectionUnit_SelectedIndexChanged_UpdateSettings;
+
+			numericUpDownMimimumUpdateInterval.ValueChanged += numericUpDownMimimumUpdateInterval_ValueChanged_UpdateSettings;
+
+			// Push possible changes through
+			comboBoxDeviceNames_SelectedIndexChanged_UpdateSettings(null, null);
+			comboBoxSerialPortNames_SelectedIndexChanged_UpdateSettings(null, null);
+			comboBoxMaximumCorrectionUnit_SelectedIndexChanged_UpdateSettings(null, null);
+		}
+
+		private void comboBoxDeviceNames_SelectedIndexChanged_UpdateSettings(object sender, EventArgs e) {
+			settings.deviceName = (string) comboBoxDeviceNames.SelectedItem;
+			settings.Save();
+		}
+
+		private void comboBoxSerialPortNames_SelectedIndexChanged_UpdateSettings(object sender, EventArgs e) {
+			settings.serialPortName = (string) comboBoxSerialPortNames.SelectedItem;
+			settings.Save();
+		}
+
+		private void checkBoxMaximumCorrectionEnabled_CheckedChanged_UpdateSettings(object sender, EventArgs e) {
+			settings.maximumCorrectionEnabled = checkBoxMaximumCorrectionEnabled.Checked;
+			settings.Save();
+		}
+
+		private void numericUpDownMaximumCorrection_ValueChanged_UpdateSettings(object sender, EventArgs e) {
+			settings.maximumCorrection = numericUpDownMaximumCorrection.Value;
+			settings.Save();
+		}
+
+		private void comboBoxMaximumCorrectionUnit_SelectedIndexChanged_UpdateSettings(object sender, EventArgs e) {
+			settings.maximumCorrectionUnit = (string) comboBoxMaximumCorrectionUnit.SelectedItem;
+			settings.Save();
+		}
+
+		private void numericUpDownMimimumUpdateInterval_ValueChanged_UpdateSettings(object sender, EventArgs e) {
+			settings.minimumUpdateInterval = numericUpDownMimimumUpdateInterval.Value;
+			settings.Save();
+		}
+		#endregion
 	}
 
 	public class TruncatedTextEllipsisRenderer : ToolStripProfessionalRenderer {
