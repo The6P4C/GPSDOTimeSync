@@ -46,6 +46,8 @@ namespace GPSDOTimeSync {
 
 			statusStrip.Renderer = new TruncatedTextEllipsisRenderer();
 			latestLogMessage.Text = "";
+
+			timeAndDateDisplayUpdate.Start();
 		}
 
 		private void PopulateDropDowns() {
@@ -80,12 +82,7 @@ namespace GPSDOTimeSync {
 
 			timeProvider.TimeAvailable += (DateTime dateTime) => {
 				Invoke(new Action(() => {
-					AddMessageToLog(
-						string.Format(
-								"Time is {0} {1}",
-								dateTime.ToLongDateString(), dateTime.ToLongTimeString()
-						), LogLevel.Info
-					);
+					
 				}));
 			};
 
@@ -114,6 +111,12 @@ namespace GPSDOTimeSync {
 
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
 			timeProvider?.Stop();
+		}
+
+		private void timeAndDateDisplayUpdate_Tick(object sender, EventArgs e) {
+			DateTime systemTime = SystemTimeUtils.GetSystemTime();
+			currentTime.Text = systemTime.ToString("HH:mm:ss");
+			currentDate.Text = systemTime.ToString("dd\\/MM\\/yyyy");
 		}
 	}
 
