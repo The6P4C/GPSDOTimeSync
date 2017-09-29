@@ -32,92 +32,75 @@ namespace GPSDOTimeSync {
 		private ITimeProvider timeProvider;
 
 		public FormMain() {
-			// Check for admin rights
-			// If running as admin:
-			//     Ask for COM port with dialog
-			//     Connect to COM port
-			//     When time message received:
-			//         If (time in UTC) AND (last time change was more than $MIN_UPDATE_INTERVAL ago) AND (error is less than $ERROR_THRESHOLD)
-			//             Change system time to GPS time
-			// Else:
-			//     Display message to tell user to run as admin
-			//     Quit
-
 			InitializeComponent();
 			PopulateDropDowns();
 
 			lastSystemTimeUpdate = 0;
 
 			statusStrip.Renderer = new TruncatedTextEllipsisRenderer();
-			latestLogMessage.Text = "";
+			labelLatestLogMessage.Text = "";
 
-			timeAndDateDisplayUpdate.Start();
+			timerClockDisplayUpdate.Start();
 		}
 
 		private void PopulateDropDowns() {
 			foreach (string portName in SerialPort.GetPortNames()) {
-				serialPortNames.Items.Add(portName);
+				comboBoxSerialPortNames.Items.Add(portName);
 			}
 
-			if (serialPortNames.Items.Count > 0) {
-				serialPortNames.SelectedIndex = 0;
+			if (comboBoxSerialPortNames.Items.Count > 0) {
+				comboBoxSerialPortNames.SelectedIndex = 0;
 			}
 
 			foreach (string deviceName in TIME_PROVIDER_CONSTRUCTORS.Keys) {
-				deviceNames.Items.Add(deviceName);
+				comboBoxDeviceNames.Items.Add(deviceName);
 			}
 
-			if (deviceNames.Items.Count > 0) {
-				deviceNames.SelectedIndex = 0;
+			if (comboBoxDeviceNames.Items.Count > 0) {
+				comboBoxDeviceNames.SelectedIndex = 0;
 			}
 
-			maximumCorrectionUnit.SelectedIndex = 0;
+			comboBoxMaximumCorrectionUnit.SelectedIndex = 0;
 		}
 
 		private void AddMessageToLog(string message, LogLevel logLevel) {
-			latestLogMessage.Text = message;
-			latestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
+			labelLatestLogMessage.Text = message;
+			labelLatestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
 		}
 
-		private void start_Click(object sender, EventArgs e) {
-			string serialPortName = (string) serialPortNames.SelectedItem;
-			string deviceName = (string) deviceNames.SelectedItem;
-
-			SerialPort serialPort = new SerialPort(serialPortName);		
-			timeProvider = TIME_PROVIDER_CONSTRUCTORS[deviceName](serialPort);
-
+		private void ConfigureTimeProvider() {
 			timeProvider.TimeAvailable += (DateTime dateTime) => {
-				int minimumUpdateIntervalValue = 0;
+				int minimumUpdateIntervalSeconds = 0;
 
 				Invoke(new Action(() => {
-					minimumUpdateIntervalValue = (int) minimumUpdateInterval.Value;
+					minimumUpdateIntervalSeconds = (int) numericUpDownMimimumUpdateInterval.Value;
 				}));
 
-				if (Environment.TickCount - lastSystemTimeUpdate < minimumUpdateIntervalValue * 1000) {
+				if (Environment.TickCount - lastSystemTimeUpdate < minimumUpdateIntervalSeconds * 1000) {
 					return;
 				}
 
-				if (maximumCorrectionEnabled.Checked) {
+				if (checkBoxMaximumCorrectionEnabled.Checked) {
 					// Positive error means system clock is ahead, negative error means system clock is behind
 					TimeSpan error = SystemTimeUtils.GetSystemTime().Subtract(dateTime).Duration();
 
-					TimeSpan maximumError = new TimeSpan();
-					int maximumCorrectionValue = (int) maximumCorrection.Value;
-					string maximumCorrectionUnitString = "";
+					TimeSpan maximumCorrection = new TimeSpan();
+					int maximumCorrectionValue = (int) numericUpDownMaximumCorrection.Value;
+					string maximumCorrectionUnit = "";
 
 					Invoke(new Action(() => {
-						maximumCorrectionUnitString = (string) maximumCorrectionUnit.SelectedItem;
+						maximumCorrectionUnit = (string) comboBoxMaximumCorrectionUnit.SelectedItem;
 					}));
 
-					if (maximumCorrectionUnitString == "hour(s)") {
-						maximumError = TimeSpan.FromHours(maximumCorrectionValue);
-					} else if (maximumCorrectionUnitString == "minute(s)") {
-						maximumError = TimeSpan.FromMinutes(maximumCorrectionValue);
-					} else if (maximumCorrectionUnitString == "second(s)") {
-						maximumError = TimeSpan.FromSeconds(maximumCorrectionValue);
+					if (maximumCorrectionUnit == "hour(s)") {
+						maximumCorrection = TimeSpan.FromHours(maximumCorrectionValue);
+					} else if (maximumCorrectionUnit == "minute(s)") {
+						maximumCorrection = TimeSpan.FromMinutes(maximumCorrectionValue);
+					} else if (maximumCorrectionUnit == "second(s)") {
+						maximumCorrection = TimeSpan.FromSeconds(maximumCorrectionValue);
 					}
 
-					if (error >= maximumError) {
+					if (error >= maximumCorrection) {
 						Invoke(new Action(() => {
 							AddMessageToLog("System time error exceeded maximum correction: time not set.", LogLevel.Info);
 						}));
@@ -146,37 +129,47 @@ namespace GPSDOTimeSync {
 					AddMessageToLog(message, logLevel);
 				}));
 			};
+		}
+
+		private void buttonStart_Click(object sender, EventArgs e) {
+			string serialPortName = (string) comboBoxSerialPortNames.SelectedItem;
+			string deviceName = (string) comboBoxDeviceNames.SelectedItem;
+
+			SerialPort serialPort = new SerialPort(serialPortName);		
+			timeProvider = TIME_PROVIDER_CONSTRUCTORS[deviceName](serialPort);
+
+			ConfigureTimeProvider();
 
 			timeProvider.Start();
 
 			AddMessageToLog("Time sync started.", LogLevel.Info);
 
-			start.Enabled = false;
-			stop.Enabled = true;
+			buttonStart.Enabled = false;
+			buttonStop.Enabled = true;
 		}
 
-		private void stop_Click(object sender, EventArgs e) {
+		private void buttonStop_Click(object sender, EventArgs e) {
 			timeProvider.Stop();
 
 			AddMessageToLog("Time sync stopped.", LogLevel.Info);
 
-			stop.Enabled = false;
-			start.Enabled = true;
+			buttonStop.Enabled = false;
+			buttonStart.Enabled = true;
 		}
 
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
 			timeProvider?.Stop();
 		}
 
-		private void timeAndDateDisplayUpdate_Tick(object sender, EventArgs e) {
-			DateTime systemTime = SystemTimeUtils.GetSystemTime();
-			currentTime.Text = systemTime.ToString("HH:mm:ss");
-			currentDate.Text = systemTime.ToString("dd\\/MM\\/yyyy");
+		private void checkBoxMaximumCorrectionEnabled_CheckedChanged(object sender, EventArgs e) {
+			numericUpDownMaximumCorrection.Enabled = checkBoxMaximumCorrectionEnabled.Checked;
+			comboBoxMaximumCorrectionUnit.Enabled = checkBoxMaximumCorrectionEnabled.Checked;
 		}
 
-		private void maximumCorrectionEnabled_CheckedChanged(object sender, EventArgs e) {
-			maximumCorrection.Enabled = maximumCorrectionEnabled.Checked;
-			maximumCorrectionUnit.Enabled = maximumCorrectionEnabled.Checked;
+		private void timerClockDisplayUpdate_Tick(object sender, EventArgs e) {
+			DateTime systemTime = SystemTimeUtils.GetSystemTime();
+			labelCurrentTime.Text = systemTime.ToString("HH:mm:ss");
+			labelCurrentDate.Text = systemTime.ToString("dd\\/MM\\/yyyy");
 		}
 	}
 

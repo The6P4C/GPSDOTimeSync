@@ -25,34 +25,32 @@
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			this.statusStrip = new System.Windows.Forms.StatusStrip();
-			this.latestLogMessage = new System.Windows.Forms.ToolStripStatusLabel();
-			this.serialPortNames = new System.Windows.Forms.ComboBox();
-			this.serialPortNamesLabel = new System.Windows.Forms.Label();
-			this.start = new System.Windows.Forms.Button();
-			this.stop = new System.Windows.Forms.Button();
-			this.deviceLabel = new System.Windows.Forms.Label();
-			this.deviceNames = new System.Windows.Forms.ComboBox();
-			this.currentTime = new System.Windows.Forms.Label();
-			this.currentDate = new System.Windows.Forms.Label();
-			this.timeAndDateDisplayUpdate = new System.Windows.Forms.Timer(this.components);
-			this.maximumCorrectionLabel = new System.Windows.Forms.Label();
-			this.maximumCorrectionEnabled = new System.Windows.Forms.CheckBox();
-			this.maximumCorrectionUnit = new System.Windows.Forms.ComboBox();
-			this.maximumCorrection = new System.Windows.Forms.NumericUpDown();
-			this.minimumUpdateIntervalLabel = new System.Windows.Forms.Label();
-			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-			this.minimumUpdateInterval = new System.Windows.Forms.NumericUpDown();
-			this.minimumUpdateIntervalSecondsLabel = new System.Windows.Forms.Label();
+			this.labelLatestLogMessage = new System.Windows.Forms.ToolStripStatusLabel();
+			this.comboBoxSerialPortNames = new System.Windows.Forms.ComboBox();
+			this.labelSerialPortNames = new System.Windows.Forms.Label();
+			this.buttonStart = new System.Windows.Forms.Button();
+			this.buttonStop = new System.Windows.Forms.Button();
+			this.labelDevice = new System.Windows.Forms.Label();
+			this.comboBoxDeviceNames = new System.Windows.Forms.ComboBox();
+			this.labelCurrentTime = new System.Windows.Forms.Label();
+			this.labelCurrentDate = new System.Windows.Forms.Label();
+			this.timerClockDisplayUpdate = new System.Windows.Forms.Timer(this.components);
+			this.labelMaximumCorrection = new System.Windows.Forms.Label();
+			this.checkBoxMaximumCorrectionEnabled = new System.Windows.Forms.CheckBox();
+			this.comboBoxMaximumCorrectionUnit = new System.Windows.Forms.ComboBox();
+			this.numericUpDownMaximumCorrection = new System.Windows.Forms.NumericUpDown();
+			this.labelMinimumUpdateInterval = new System.Windows.Forms.Label();
+			this.numericUpDownMimimumUpdateInterval = new System.Windows.Forms.NumericUpDown();
+			this.labelMinimumUpdateIntervalSeconds = new System.Windows.Forms.Label();
 			this.statusStrip.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.maximumCorrection)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.minimumUpdateInterval)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaximumCorrection)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDownMimimumUpdateInterval)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// statusStrip
 			// 
 			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.latestLogMessage});
+            this.labelLatestLogMessage});
 			this.statusStrip.Location = new System.Drawing.Point(0, 164);
 			this.statusStrip.Name = "statusStrip";
 			this.statusStrip.Size = new System.Drawing.Size(534, 22);
@@ -60,225 +58,206 @@
 			this.statusStrip.TabIndex = 1;
 			this.statusStrip.Text = "statusStrip1";
 			// 
-			// latestLogMessage
+			// labelLatestLogMessage
 			// 
-			this.latestLogMessage.ForeColor = System.Drawing.Color.Black;
-			this.latestLogMessage.Name = "latestLogMessage";
-			this.latestLogMessage.Size = new System.Drawing.Size(519, 17);
-			this.latestLogMessage.Spring = true;
-			this.latestLogMessage.Text = "{RUNTIME}";
+			this.labelLatestLogMessage.ForeColor = System.Drawing.Color.Black;
+			this.labelLatestLogMessage.Name = "labelLatestLogMessage";
+			this.labelLatestLogMessage.Size = new System.Drawing.Size(488, 17);
+			this.labelLatestLogMessage.Spring = true;
+			this.labelLatestLogMessage.Text = "{RUNTIME}";
 			// 
-			// serialPortNames
+			// comboBoxSerialPortNames
 			// 
-			this.serialPortNames.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.serialPortNames.FormattingEnabled = true;
-			this.serialPortNames.Location = new System.Drawing.Point(139, 25);
-			this.serialPortNames.Name = "serialPortNames";
-			this.serialPortNames.Size = new System.Drawing.Size(121, 21);
-			this.serialPortNames.TabIndex = 2;
+			this.comboBoxSerialPortNames.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxSerialPortNames.FormattingEnabled = true;
+			this.comboBoxSerialPortNames.Location = new System.Drawing.Point(139, 25);
+			this.comboBoxSerialPortNames.Name = "comboBoxSerialPortNames";
+			this.comboBoxSerialPortNames.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxSerialPortNames.TabIndex = 2;
 			// 
-			// serialPortNamesLabel
+			// labelSerialPortNames
 			// 
-			this.serialPortNamesLabel.AutoSize = true;
-			this.serialPortNamesLabel.Location = new System.Drawing.Point(136, 9);
-			this.serialPortNamesLabel.Name = "serialPortNamesLabel";
-			this.serialPortNamesLabel.Size = new System.Drawing.Size(55, 13);
-			this.serialPortNamesLabel.TabIndex = 3;
-			this.serialPortNamesLabel.Text = "Serial Port";
+			this.labelSerialPortNames.AutoSize = true;
+			this.labelSerialPortNames.Location = new System.Drawing.Point(136, 9);
+			this.labelSerialPortNames.Name = "labelSerialPortNames";
+			this.labelSerialPortNames.Size = new System.Drawing.Size(55, 13);
+			this.labelSerialPortNames.TabIndex = 3;
+			this.labelSerialPortNames.Text = "Serial Port";
 			// 
-			// start
+			// buttonStart
 			// 
-			this.start.Location = new System.Drawing.Point(12, 128);
-			this.start.Name = "start";
-			this.start.Size = new System.Drawing.Size(75, 23);
-			this.start.TabIndex = 4;
-			this.start.Text = "Start";
-			this.start.UseVisualStyleBackColor = true;
-			this.start.Click += new System.EventHandler(this.start_Click);
+			this.buttonStart.Location = new System.Drawing.Point(12, 128);
+			this.buttonStart.Name = "buttonStart";
+			this.buttonStart.Size = new System.Drawing.Size(75, 23);
+			this.buttonStart.TabIndex = 4;
+			this.buttonStart.Text = "Start";
+			this.buttonStart.UseVisualStyleBackColor = true;
+			this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
 			// 
-			// stop
+			// buttonStop
 			// 
-			this.stop.Enabled = false;
-			this.stop.Location = new System.Drawing.Point(93, 128);
-			this.stop.Name = "stop";
-			this.stop.Size = new System.Drawing.Size(75, 23);
-			this.stop.TabIndex = 5;
-			this.stop.Text = "Stop";
-			this.stop.UseVisualStyleBackColor = true;
-			this.stop.Click += new System.EventHandler(this.stop_Click);
+			this.buttonStop.Enabled = false;
+			this.buttonStop.Location = new System.Drawing.Point(93, 128);
+			this.buttonStop.Name = "buttonStop";
+			this.buttonStop.Size = new System.Drawing.Size(75, 23);
+			this.buttonStop.TabIndex = 5;
+			this.buttonStop.Text = "Stop";
+			this.buttonStop.UseVisualStyleBackColor = true;
+			this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
 			// 
-			// deviceLabel
+			// labelDevice
 			// 
-			this.deviceLabel.AutoSize = true;
-			this.deviceLabel.Location = new System.Drawing.Point(9, 9);
-			this.deviceLabel.Name = "deviceLabel";
-			this.deviceLabel.Size = new System.Drawing.Size(41, 13);
-			this.deviceLabel.TabIndex = 6;
-			this.deviceLabel.Text = "Device";
+			this.labelDevice.AutoSize = true;
+			this.labelDevice.Location = new System.Drawing.Point(9, 9);
+			this.labelDevice.Name = "labelDevice";
+			this.labelDevice.Size = new System.Drawing.Size(41, 13);
+			this.labelDevice.TabIndex = 6;
+			this.labelDevice.Text = "Device";
 			// 
-			// deviceNames
+			// comboBoxDeviceNames
 			// 
-			this.deviceNames.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.deviceNames.FormattingEnabled = true;
-			this.deviceNames.Location = new System.Drawing.Point(12, 25);
-			this.deviceNames.Name = "deviceNames";
-			this.deviceNames.Size = new System.Drawing.Size(121, 21);
-			this.deviceNames.TabIndex = 7;
+			this.comboBoxDeviceNames.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxDeviceNames.FormattingEnabled = true;
+			this.comboBoxDeviceNames.Location = new System.Drawing.Point(12, 25);
+			this.comboBoxDeviceNames.Name = "comboBoxDeviceNames";
+			this.comboBoxDeviceNames.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxDeviceNames.TabIndex = 7;
 			// 
-			// currentTime
+			// labelCurrentTime
 			// 
-			this.currentTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.labelCurrentTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.currentTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 30.25F);
-			this.currentTime.Location = new System.Drawing.Point(266, 9);
-			this.currentTime.Name = "currentTime";
-			this.currentTime.Size = new System.Drawing.Size(256, 50);
-			this.currentTime.TabIndex = 8;
-			this.currentTime.Text = "{RUNTIME}";
-			this.currentTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelCurrentTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 30.25F);
+			this.labelCurrentTime.Location = new System.Drawing.Point(266, 9);
+			this.labelCurrentTime.Name = "labelCurrentTime";
+			this.labelCurrentTime.Size = new System.Drawing.Size(256, 50);
+			this.labelCurrentTime.TabIndex = 8;
+			this.labelCurrentTime.Text = "{RUNTIME}";
+			this.labelCurrentTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// currentDate
+			// labelCurrentDate
 			// 
-			this.currentDate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.labelCurrentDate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.currentDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 30.25F);
-			this.currentDate.Location = new System.Drawing.Point(266, 59);
-			this.currentDate.Name = "currentDate";
-			this.currentDate.Size = new System.Drawing.Size(256, 50);
-			this.currentDate.TabIndex = 9;
-			this.currentDate.Text = "{RUNTIME}";
-			this.currentDate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelCurrentDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 30.25F);
+			this.labelCurrentDate.Location = new System.Drawing.Point(266, 59);
+			this.labelCurrentDate.Name = "labelCurrentDate";
+			this.labelCurrentDate.Size = new System.Drawing.Size(256, 50);
+			this.labelCurrentDate.TabIndex = 9;
+			this.labelCurrentDate.Text = "{RUNTIME}";
+			this.labelCurrentDate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// timeAndDateDisplayUpdate
+			// timerClockDisplayUpdate
 			// 
-			this.timeAndDateDisplayUpdate.Interval = 50;
-			this.timeAndDateDisplayUpdate.Tick += new System.EventHandler(this.timeAndDateDisplayUpdate_Tick);
+			this.timerClockDisplayUpdate.Interval = 50;
+			this.timerClockDisplayUpdate.Tick += new System.EventHandler(this.timerClockDisplayUpdate_Tick);
 			// 
-			// maximumCorrectionLabel
+			// labelMaximumCorrection
 			// 
-			this.maximumCorrectionLabel.AutoSize = true;
-			this.maximumCorrectionLabel.Location = new System.Drawing.Point(9, 49);
-			this.maximumCorrectionLabel.Name = "maximumCorrectionLabel";
-			this.maximumCorrectionLabel.Size = new System.Drawing.Size(102, 13);
-			this.maximumCorrectionLabel.TabIndex = 10;
-			this.maximumCorrectionLabel.Text = "Maximum Correction";
+			this.labelMaximumCorrection.AutoSize = true;
+			this.labelMaximumCorrection.Location = new System.Drawing.Point(9, 49);
+			this.labelMaximumCorrection.Name = "labelMaximumCorrection";
+			this.labelMaximumCorrection.Size = new System.Drawing.Size(102, 13);
+			this.labelMaximumCorrection.TabIndex = 10;
+			this.labelMaximumCorrection.Text = "Maximum Correction";
 			// 
-			// maximumCorrectionEnabled
+			// checkBoxMaximumCorrectionEnabled
 			// 
-			this.maximumCorrectionEnabled.AutoSize = true;
-			this.maximumCorrectionEnabled.Location = new System.Drawing.Point(12, 65);
-			this.maximumCorrectionEnabled.Name = "maximumCorrectionEnabled";
-			this.maximumCorrectionEnabled.Size = new System.Drawing.Size(15, 14);
-			this.maximumCorrectionEnabled.TabIndex = 11;
-			this.maximumCorrectionEnabled.UseVisualStyleBackColor = true;
-			this.maximumCorrectionEnabled.CheckedChanged += new System.EventHandler(this.maximumCorrectionEnabled_CheckedChanged);
+			this.checkBoxMaximumCorrectionEnabled.AutoSize = true;
+			this.checkBoxMaximumCorrectionEnabled.Location = new System.Drawing.Point(12, 65);
+			this.checkBoxMaximumCorrectionEnabled.Name = "checkBoxMaximumCorrectionEnabled";
+			this.checkBoxMaximumCorrectionEnabled.Size = new System.Drawing.Size(15, 14);
+			this.checkBoxMaximumCorrectionEnabled.TabIndex = 11;
+			this.checkBoxMaximumCorrectionEnabled.UseVisualStyleBackColor = true;
+			this.checkBoxMaximumCorrectionEnabled.CheckedChanged += new System.EventHandler(this.checkBoxMaximumCorrectionEnabled_CheckedChanged);
 			// 
-			// maximumCorrectionUnit
+			// comboBoxMaximumCorrectionUnit
 			// 
-			this.maximumCorrectionUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.maximumCorrectionUnit.Enabled = false;
-			this.maximumCorrectionUnit.FormattingEnabled = true;
-			this.maximumCorrectionUnit.Items.AddRange(new object[] {
+			this.comboBoxMaximumCorrectionUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxMaximumCorrectionUnit.Enabled = false;
+			this.comboBoxMaximumCorrectionUnit.FormattingEnabled = true;
+			this.comboBoxMaximumCorrectionUnit.Items.AddRange(new object[] {
             "hour(s)",
             "minute(s)",
             "second(s)"});
-			this.maximumCorrectionUnit.Location = new System.Drawing.Point(86, 62);
-			this.maximumCorrectionUnit.Name = "maximumCorrectionUnit";
-			this.maximumCorrectionUnit.Size = new System.Drawing.Size(79, 21);
-			this.maximumCorrectionUnit.TabIndex = 12;
+			this.comboBoxMaximumCorrectionUnit.Location = new System.Drawing.Point(86, 62);
+			this.comboBoxMaximumCorrectionUnit.Name = "comboBoxMaximumCorrectionUnit";
+			this.comboBoxMaximumCorrectionUnit.Size = new System.Drawing.Size(79, 21);
+			this.comboBoxMaximumCorrectionUnit.TabIndex = 12;
 			// 
-			// maximumCorrection
+			// numericUpDownMaximumCorrection
 			// 
-			this.maximumCorrection.Enabled = false;
-			this.maximumCorrection.Location = new System.Drawing.Point(33, 63);
-			this.maximumCorrection.Minimum = new decimal(new int[] {
+			this.numericUpDownMaximumCorrection.Enabled = false;
+			this.numericUpDownMaximumCorrection.Location = new System.Drawing.Point(33, 63);
+			this.numericUpDownMaximumCorrection.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-			this.maximumCorrection.Name = "maximumCorrection";
-			this.maximumCorrection.Size = new System.Drawing.Size(47, 20);
-			this.maximumCorrection.TabIndex = 13;
-			this.maximumCorrection.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			// 
-			// minimumUpdateIntervalLabel
-			// 
-			this.minimumUpdateIntervalLabel.AutoSize = true;
-			this.minimumUpdateIntervalLabel.Location = new System.Drawing.Point(9, 86);
-			this.minimumUpdateIntervalLabel.Name = "minimumUpdateIntervalLabel";
-			this.minimumUpdateIntervalLabel.Size = new System.Drawing.Size(124, 13);
-			this.minimumUpdateIntervalLabel.TabIndex = 14;
-			this.minimumUpdateIntervalLabel.Text = "Minimum Update Interval";
-			// 
-			// numericUpDown1
-			// 
-			this.numericUpDown1.Enabled = false;
-			this.numericUpDown1.Location = new System.Drawing.Point(171, 63);
-			this.numericUpDown1.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this.numericUpDown1.Name = "numericUpDown1";
-			this.numericUpDown1.Size = new System.Drawing.Size(47, 20);
-			this.numericUpDown1.TabIndex = 15;
-			this.numericUpDown1.Value = new decimal(new int[] {
+			this.numericUpDownMaximumCorrection.Name = "numericUpDownMaximumCorrection";
+			this.numericUpDownMaximumCorrection.Size = new System.Drawing.Size(47, 20);
+			this.numericUpDownMaximumCorrection.TabIndex = 13;
+			this.numericUpDownMaximumCorrection.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
 			// 
-			// minimumUpdateInterval
+			// labelMinimumUpdateInterval
 			// 
-			this.minimumUpdateInterval.Location = new System.Drawing.Point(12, 102);
-			this.minimumUpdateInterval.Minimum = new decimal(new int[] {
+			this.labelMinimumUpdateInterval.AutoSize = true;
+			this.labelMinimumUpdateInterval.Location = new System.Drawing.Point(9, 86);
+			this.labelMinimumUpdateInterval.Name = "labelMinimumUpdateInterval";
+			this.labelMinimumUpdateInterval.Size = new System.Drawing.Size(124, 13);
+			this.labelMinimumUpdateInterval.TabIndex = 14;
+			this.labelMinimumUpdateInterval.Text = "Minimum Update Interval";
+			// 
+			// numericUpDownMimimumUpdateInterval
+			// 
+			this.numericUpDownMimimumUpdateInterval.Location = new System.Drawing.Point(12, 102);
+			this.numericUpDownMimimumUpdateInterval.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-			this.minimumUpdateInterval.Name = "minimumUpdateInterval";
-			this.minimumUpdateInterval.Size = new System.Drawing.Size(47, 20);
-			this.minimumUpdateInterval.TabIndex = 16;
-			this.minimumUpdateInterval.Value = new decimal(new int[] {
+			this.numericUpDownMimimumUpdateInterval.Name = "numericUpDownMimimumUpdateInterval";
+			this.numericUpDownMimimumUpdateInterval.Size = new System.Drawing.Size(47, 20);
+			this.numericUpDownMimimumUpdateInterval.TabIndex = 16;
+			this.numericUpDownMimimumUpdateInterval.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
 			// 
-			// minimumUpdateIntervalSecondsLabel
+			// labelMinimumUpdateIntervalSeconds
 			// 
-			this.minimumUpdateIntervalSecondsLabel.AutoSize = true;
-			this.minimumUpdateIntervalSecondsLabel.Location = new System.Drawing.Point(64, 104);
-			this.minimumUpdateIntervalSecondsLabel.Name = "minimumUpdateIntervalSecondsLabel";
-			this.minimumUpdateIntervalSecondsLabel.Size = new System.Drawing.Size(47, 13);
-			this.minimumUpdateIntervalSecondsLabel.TabIndex = 17;
-			this.minimumUpdateIntervalSecondsLabel.Text = "seconds";
+			this.labelMinimumUpdateIntervalSeconds.AutoSize = true;
+			this.labelMinimumUpdateIntervalSeconds.Location = new System.Drawing.Point(64, 104);
+			this.labelMinimumUpdateIntervalSeconds.Name = "labelMinimumUpdateIntervalSeconds";
+			this.labelMinimumUpdateIntervalSeconds.Size = new System.Drawing.Size(47, 13);
+			this.labelMinimumUpdateIntervalSeconds.TabIndex = 17;
+			this.labelMinimumUpdateIntervalSeconds.Text = "seconds";
 			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(534, 186);
-			this.Controls.Add(this.minimumUpdateIntervalSecondsLabel);
-			this.Controls.Add(this.minimumUpdateInterval);
-			this.Controls.Add(this.numericUpDown1);
-			this.Controls.Add(this.minimumUpdateIntervalLabel);
-			this.Controls.Add(this.maximumCorrection);
-			this.Controls.Add(this.maximumCorrectionUnit);
-			this.Controls.Add(this.maximumCorrectionEnabled);
-			this.Controls.Add(this.maximumCorrectionLabel);
-			this.Controls.Add(this.currentDate);
-			this.Controls.Add(this.currentTime);
-			this.Controls.Add(this.deviceNames);
-			this.Controls.Add(this.deviceLabel);
-			this.Controls.Add(this.stop);
-			this.Controls.Add(this.start);
-			this.Controls.Add(this.serialPortNamesLabel);
-			this.Controls.Add(this.serialPortNames);
+			this.Controls.Add(this.labelMinimumUpdateIntervalSeconds);
+			this.Controls.Add(this.numericUpDownMimimumUpdateInterval);
+			this.Controls.Add(this.labelMinimumUpdateInterval);
+			this.Controls.Add(this.numericUpDownMaximumCorrection);
+			this.Controls.Add(this.comboBoxMaximumCorrectionUnit);
+			this.Controls.Add(this.checkBoxMaximumCorrectionEnabled);
+			this.Controls.Add(this.labelMaximumCorrection);
+			this.Controls.Add(this.labelCurrentDate);
+			this.Controls.Add(this.labelCurrentTime);
+			this.Controls.Add(this.comboBoxDeviceNames);
+			this.Controls.Add(this.labelDevice);
+			this.Controls.Add(this.buttonStop);
+			this.Controls.Add(this.buttonStart);
+			this.Controls.Add(this.labelSerialPortNames);
+			this.Controls.Add(this.comboBoxSerialPortNames);
 			this.Controls.Add(this.statusStrip);
 			this.MinimumSize = new System.Drawing.Size(550, 225);
 			this.Name = "FormMain";
@@ -286,9 +265,8 @@
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
 			this.statusStrip.ResumeLayout(false);
 			this.statusStrip.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.maximumCorrection)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.minimumUpdateInterval)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaximumCorrection)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDownMimimumUpdateInterval)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -296,24 +274,23 @@
 
 		#endregion
 		private System.Windows.Forms.StatusStrip statusStrip;
-		private System.Windows.Forms.ToolStripStatusLabel latestLogMessage;
-		private System.Windows.Forms.ComboBox serialPortNames;
-		private System.Windows.Forms.Label serialPortNamesLabel;
-		private System.Windows.Forms.Button start;
-		private System.Windows.Forms.Button stop;
-		private System.Windows.Forms.Label deviceLabel;
-		private System.Windows.Forms.ComboBox deviceNames;
-		private System.Windows.Forms.Label currentTime;
-		private System.Windows.Forms.Label currentDate;
-		private System.Windows.Forms.Timer timeAndDateDisplayUpdate;
-		private System.Windows.Forms.Label maximumCorrectionLabel;
-		private System.Windows.Forms.CheckBox maximumCorrectionEnabled;
-		private System.Windows.Forms.ComboBox maximumCorrectionUnit;
-		private System.Windows.Forms.NumericUpDown maximumCorrection;
-		private System.Windows.Forms.Label minimumUpdateIntervalLabel;
-		private System.Windows.Forms.NumericUpDown numericUpDown1;
-		private System.Windows.Forms.NumericUpDown minimumUpdateInterval;
-		private System.Windows.Forms.Label minimumUpdateIntervalSecondsLabel;
+		private System.Windows.Forms.ToolStripStatusLabel labelLatestLogMessage;
+		private System.Windows.Forms.ComboBox comboBoxSerialPortNames;
+		private System.Windows.Forms.Label labelSerialPortNames;
+		private System.Windows.Forms.Button buttonStart;
+		private System.Windows.Forms.Button buttonStop;
+		private System.Windows.Forms.Label labelDevice;
+		private System.Windows.Forms.ComboBox comboBoxDeviceNames;
+		private System.Windows.Forms.Label labelCurrentTime;
+		private System.Windows.Forms.Label labelCurrentDate;
+		private System.Windows.Forms.Timer timerClockDisplayUpdate;
+		private System.Windows.Forms.Label labelMaximumCorrection;
+		private System.Windows.Forms.CheckBox checkBoxMaximumCorrectionEnabled;
+		private System.Windows.Forms.ComboBox comboBoxMaximumCorrectionUnit;
+		private System.Windows.Forms.NumericUpDown numericUpDownMaximumCorrection;
+		private System.Windows.Forms.Label labelMinimumUpdateInterval;
+		private System.Windows.Forms.NumericUpDown numericUpDownMimimumUpdateInterval;
+		private System.Windows.Forms.Label labelMinimumUpdateIntervalSeconds;
 	}
 }
 
