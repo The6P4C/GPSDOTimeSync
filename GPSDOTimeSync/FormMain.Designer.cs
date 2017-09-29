@@ -35,14 +35,25 @@
 			this.currentTime = new System.Windows.Forms.Label();
 			this.currentDate = new System.Windows.Forms.Label();
 			this.timeAndDateDisplayUpdate = new System.Windows.Forms.Timer(this.components);
+			this.maximumCorrectionLabel = new System.Windows.Forms.Label();
+			this.maximumCorrectionEnabled = new System.Windows.Forms.CheckBox();
+			this.maximumCorrectionUnit = new System.Windows.Forms.ComboBox();
+			this.maximumCorrection = new System.Windows.Forms.NumericUpDown();
+			this.minimumUpdateIntervalLabel = new System.Windows.Forms.Label();
+			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+			this.minimumUpdateInterval = new System.Windows.Forms.NumericUpDown();
+			this.minimumUpdateIntervalSecondsLabel = new System.Windows.Forms.Label();
 			this.statusStrip.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.maximumCorrection)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.minimumUpdateInterval)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// statusStrip
 			// 
 			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.latestLogMessage});
-			this.statusStrip.Location = new System.Drawing.Point(0, 119);
+			this.statusStrip.Location = new System.Drawing.Point(0, 164);
 			this.statusStrip.Name = "statusStrip";
 			this.statusStrip.Size = new System.Drawing.Size(534, 22);
 			this.statusStrip.SizingGrip = false;
@@ -77,7 +88,7 @@
 			// 
 			// start
 			// 
-			this.start.Location = new System.Drawing.Point(12, 52);
+			this.start.Location = new System.Drawing.Point(12, 128);
 			this.start.Name = "start";
 			this.start.Size = new System.Drawing.Size(75, 23);
 			this.start.TabIndex = 4;
@@ -88,7 +99,7 @@
 			// stop
 			// 
 			this.stop.Enabled = false;
-			this.stop.Location = new System.Drawing.Point(93, 52);
+			this.stop.Location = new System.Drawing.Point(93, 128);
 			this.stop.Name = "stop";
 			this.stop.Size = new System.Drawing.Size(75, 23);
 			this.stop.TabIndex = 5;
@@ -143,11 +154,123 @@
 			this.timeAndDateDisplayUpdate.Interval = 50;
 			this.timeAndDateDisplayUpdate.Tick += new System.EventHandler(this.timeAndDateDisplayUpdate_Tick);
 			// 
+			// maximumCorrectionLabel
+			// 
+			this.maximumCorrectionLabel.AutoSize = true;
+			this.maximumCorrectionLabel.Location = new System.Drawing.Point(9, 49);
+			this.maximumCorrectionLabel.Name = "maximumCorrectionLabel";
+			this.maximumCorrectionLabel.Size = new System.Drawing.Size(102, 13);
+			this.maximumCorrectionLabel.TabIndex = 10;
+			this.maximumCorrectionLabel.Text = "Maximum Correction";
+			// 
+			// maximumCorrectionEnabled
+			// 
+			this.maximumCorrectionEnabled.AutoSize = true;
+			this.maximumCorrectionEnabled.Location = new System.Drawing.Point(12, 65);
+			this.maximumCorrectionEnabled.Name = "maximumCorrectionEnabled";
+			this.maximumCorrectionEnabled.Size = new System.Drawing.Size(15, 14);
+			this.maximumCorrectionEnabled.TabIndex = 11;
+			this.maximumCorrectionEnabled.UseVisualStyleBackColor = true;
+			this.maximumCorrectionEnabled.CheckedChanged += new System.EventHandler(this.maximumCorrectionEnabled_CheckedChanged);
+			// 
+			// maximumCorrectionUnit
+			// 
+			this.maximumCorrectionUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.maximumCorrectionUnit.Enabled = false;
+			this.maximumCorrectionUnit.FormattingEnabled = true;
+			this.maximumCorrectionUnit.Items.AddRange(new object[] {
+            "hour(s)",
+            "minute(s)",
+            "second(s)"});
+			this.maximumCorrectionUnit.Location = new System.Drawing.Point(86, 62);
+			this.maximumCorrectionUnit.Name = "maximumCorrectionUnit";
+			this.maximumCorrectionUnit.Size = new System.Drawing.Size(79, 21);
+			this.maximumCorrectionUnit.TabIndex = 12;
+			// 
+			// maximumCorrection
+			// 
+			this.maximumCorrection.Enabled = false;
+			this.maximumCorrection.Location = new System.Drawing.Point(33, 63);
+			this.maximumCorrection.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.maximumCorrection.Name = "maximumCorrection";
+			this.maximumCorrection.Size = new System.Drawing.Size(47, 20);
+			this.maximumCorrection.TabIndex = 13;
+			this.maximumCorrection.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// minimumUpdateIntervalLabel
+			// 
+			this.minimumUpdateIntervalLabel.AutoSize = true;
+			this.minimumUpdateIntervalLabel.Location = new System.Drawing.Point(9, 86);
+			this.minimumUpdateIntervalLabel.Name = "minimumUpdateIntervalLabel";
+			this.minimumUpdateIntervalLabel.Size = new System.Drawing.Size(124, 13);
+			this.minimumUpdateIntervalLabel.TabIndex = 14;
+			this.minimumUpdateIntervalLabel.Text = "Minimum Update Interval";
+			// 
+			// numericUpDown1
+			// 
+			this.numericUpDown1.Enabled = false;
+			this.numericUpDown1.Location = new System.Drawing.Point(171, 63);
+			this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.numericUpDown1.Name = "numericUpDown1";
+			this.numericUpDown1.Size = new System.Drawing.Size(47, 20);
+			this.numericUpDown1.TabIndex = 15;
+			this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// minimumUpdateInterval
+			// 
+			this.minimumUpdateInterval.Location = new System.Drawing.Point(12, 102);
+			this.minimumUpdateInterval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.minimumUpdateInterval.Name = "minimumUpdateInterval";
+			this.minimumUpdateInterval.Size = new System.Drawing.Size(47, 20);
+			this.minimumUpdateInterval.TabIndex = 16;
+			this.minimumUpdateInterval.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// minimumUpdateIntervalSecondsLabel
+			// 
+			this.minimumUpdateIntervalSecondsLabel.AutoSize = true;
+			this.minimumUpdateIntervalSecondsLabel.Location = new System.Drawing.Point(64, 104);
+			this.minimumUpdateIntervalSecondsLabel.Name = "minimumUpdateIntervalSecondsLabel";
+			this.minimumUpdateIntervalSecondsLabel.Size = new System.Drawing.Size(47, 13);
+			this.minimumUpdateIntervalSecondsLabel.TabIndex = 17;
+			this.minimumUpdateIntervalSecondsLabel.Text = "seconds";
+			// 
 			// FormMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(534, 141);
+			this.ClientSize = new System.Drawing.Size(534, 186);
+			this.Controls.Add(this.minimumUpdateIntervalSecondsLabel);
+			this.Controls.Add(this.minimumUpdateInterval);
+			this.Controls.Add(this.numericUpDown1);
+			this.Controls.Add(this.minimumUpdateIntervalLabel);
+			this.Controls.Add(this.maximumCorrection);
+			this.Controls.Add(this.maximumCorrectionUnit);
+			this.Controls.Add(this.maximumCorrectionEnabled);
+			this.Controls.Add(this.maximumCorrectionLabel);
 			this.Controls.Add(this.currentDate);
 			this.Controls.Add(this.currentTime);
 			this.Controls.Add(this.deviceNames);
@@ -157,12 +280,15 @@
 			this.Controls.Add(this.serialPortNamesLabel);
 			this.Controls.Add(this.serialPortNames);
 			this.Controls.Add(this.statusStrip);
-			this.MinimumSize = new System.Drawing.Size(550, 180);
+			this.MinimumSize = new System.Drawing.Size(550, 225);
 			this.Name = "FormMain";
 			this.Text = "GPSDO Time Sync";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
 			this.statusStrip.ResumeLayout(false);
 			this.statusStrip.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.maximumCorrection)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.minimumUpdateInterval)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -180,6 +306,14 @@
 		private System.Windows.Forms.Label currentTime;
 		private System.Windows.Forms.Label currentDate;
 		private System.Windows.Forms.Timer timeAndDateDisplayUpdate;
+		private System.Windows.Forms.Label maximumCorrectionLabel;
+		private System.Windows.Forms.CheckBox maximumCorrectionEnabled;
+		private System.Windows.Forms.ComboBox maximumCorrectionUnit;
+		private System.Windows.Forms.NumericUpDown maximumCorrection;
+		private System.Windows.Forms.Label minimumUpdateIntervalLabel;
+		private System.Windows.Forms.NumericUpDown numericUpDown1;
+		private System.Windows.Forms.NumericUpDown minimumUpdateInterval;
+		private System.Windows.Forms.Label minimumUpdateIntervalSecondsLabel;
 	}
 }
 

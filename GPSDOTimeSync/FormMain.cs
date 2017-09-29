@@ -70,10 +70,12 @@ namespace GPSDOTimeSync {
 			if (deviceNames.Items.Count > 0) {
 				deviceNames.SelectedIndex = 0;
 			}
+
+			maximumCorrectionUnit.SelectedIndex = 0;
 		}
 
 		private void AddMessageToLog(string message, LogLevel logLevel) {
-			latestLogMessage.Text = string.Format("{0} ({1})", message, DateTime.Now.ToString("G"));
+			latestLogMessage.Text = message;
 			latestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
 		}
 
@@ -85,10 +87,45 @@ namespace GPSDOTimeSync {
 			timeProvider = TIME_PROVIDER_CONSTRUCTORS[deviceName](serialPort);
 
 			timeProvider.TimeAvailable += (DateTime dateTime) => {
-				if (Environment.TickCount - lastSystemTimeUpdate < 5000) {
+				int minimumUpdateIntervalValue = 0;
+
+				Invoke(new Action(() => {
+					minimumUpdateIntervalValue = (int) minimumUpdateInterval.Value;
+				}));
+
+				if (Environment.TickCount - lastSystemTimeUpdate < minimumUpdateIntervalValue * 1000) {
 					return;
 				}
-				
+
+				if (maximumCorrectionEnabled.Checked) {
+					// Positive error means system clock is ahead, negative error means system clock is behind
+					TimeSpan error = SystemTimeUtils.GetSystemTime().Subtract(dateTime).Duration();
+
+					TimeSpan maximumError = new TimeSpan();
+					int maximumCorrectionValue = (int) maximumCorrection.Value;
+					string maximumCorrectionUnitString = "";
+
+					Invoke(new Action(() => {
+						maximumCorrectionUnitString = (string) maximumCorrectionUnit.SelectedItem;
+					}));
+
+					if (maximumCorrectionUnitString == "hour(s)") {
+						maximumError = TimeSpan.FromHours(maximumCorrectionValue);
+					} else if (maximumCorrectionUnitString == "minute(s)") {
+						maximumError = TimeSpan.FromMinutes(maximumCorrectionValue);
+					} else if (maximumCorrectionUnitString == "second(s)") {
+						maximumError = TimeSpan.FromSeconds(maximumCorrectionValue);
+					}
+
+					if (error >= maximumError) {
+						Invoke(new Action(() => {
+							AddMessageToLog("System time error exceeded maximum correction: time not set.", LogLevel.Info);
+						}));
+
+						return;
+					}
+				}
+
 				SystemTimeUtils.SetSystemTime(dateTime);
 
 				Invoke(new Action(() => {
@@ -135,6 +172,11 @@ namespace GPSDOTimeSync {
 			DateTime systemTime = SystemTimeUtils.GetSystemTime();
 			currentTime.Text = systemTime.ToString("HH:mm:ss");
 			currentDate.Text = systemTime.ToString("dd\\/MM\\/yyyy");
+		}
+
+		private void maximumCorrectionEnabled_CheckedChanged(object sender, EventArgs e) {
+			maximumCorrection.Enabled = maximumCorrectionEnabled.Checked;
+			maximumCorrectionUnit.Enabled = maximumCorrectionEnabled.Checked;
 		}
 	}
 
