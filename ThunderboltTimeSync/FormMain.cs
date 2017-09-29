@@ -24,16 +24,10 @@ namespace ThunderboltTimeSync {
 
 			tbsp.PacketReceived += (ThunderboltPacket packet) => {
 				if (packet.IsPacketValid) {
-					List<string> dataByteStrings = packet.Data.Select(x => string.Format("{0:X2}", x)).ToList();
-					List<string> rawDataByteStrings = packet.RawData.Select(x => string.Format("{0:X2}", x)).ToList();
-					Debug.WriteLine(
-						string.Format(
-							"Received packet: ID: {0:X2}, Data: {1}, Raw Data: {2}",
-							packet.ID, string.Join(" ", dataByteStrings), string.Join(" ", rawDataByteStrings)
-						)
-					);
-				} else {
-					Debug.WriteLine("Received invalid packet.");
+					if (packet.ID == 0x8F && packet.Data.Count == 17 && packet.Data[0] == 0xAB) {
+						ushort year = (ushort) (packet.Data[15] << 8 | packet.Data[16]);
+						Debug.WriteLine(year);
+					}
 				}
 			};
 
