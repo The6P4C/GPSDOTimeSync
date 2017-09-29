@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using GPSDOTimeSync.Devices.Thunderbolt;
 using GPSDOTimeSync.TimeProviders;
 using GPSDOTimeSync.TimeProviders.Thunderbolt;
+using System.Diagnostics;
 
 namespace GPSDOTimeSync {
 	public partial class FormMain : Form {
@@ -27,6 +28,7 @@ namespace GPSDOTimeSync {
 			}
 		};
 
+		private int lastSystemTimeUpdate;
 		private ITimeProvider timeProvider;
 
 		public FormMain() {
@@ -43,6 +45,8 @@ namespace GPSDOTimeSync {
 
 			InitializeComponent();
 			PopulateDropDowns();
+
+			lastSystemTimeUpdate = 0;
 
 			statusStrip.Renderer = new TruncatedTextEllipsisRenderer();
 			latestLogMessage.Text = "";
@@ -81,9 +85,23 @@ namespace GPSDOTimeSync {
 			timeProvider = TIME_PROVIDER_CONSTRUCTORS[deviceName](serialPort);
 
 			timeProvider.TimeAvailable += (DateTime dateTime) => {
+				if (Environment.TickCount - lastSystemTimeUpdate < 5000) {
+					return;
+				}
+				
+				SystemTimeUtils.SetSystemTime(dateTime);
+
 				Invoke(new Action(() => {
-					
+					AddMessageToLog(
+						string.Format(
+							"System time set to {0}.",
+							dateTime.ToString("HH:mm:ss dd\\/MM\\/yyyy")
+						),
+						LogLevel.Info
+					);
 				}));
+
+				lastSystemTimeUpdate = Environment.TickCount;
 			};
 
 			timeProvider.Log += (string message, LogLevel logLevel) => {
