@@ -34,6 +34,12 @@ namespace GPSDOTimeSync.TimeProviders.Thunderbolt {
 					ushort weekNumber = (ushort) (packet.Data[5] << 8 | packet.Data[6]);
 					short utcOffset = (short) (packet.Data[7] << 8 | packet.Data[8]);
 
+					// The Thunderbolt can take up to 12.5 minutes to receive the UTC offset
+					if (utcOffset == 0) {
+						Log?.Invoke("Thunderbolt has not yet recieved UTC offset.", LogLevel.Error);
+						return;
+					}
+
 					// Current epoch for GPS week numbers is the morning of 22/8/1999
 					DateTime dateTime = new DateTime(1999, 8, 22, 0, 0, 0);
 
