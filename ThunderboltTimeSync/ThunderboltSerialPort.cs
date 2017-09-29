@@ -86,8 +86,6 @@ namespace ThunderboltTimeSync {
 
 			bool inStuffedDLE = false;
 			foreach (byte b in data) {
-				Debug.WriteLine(string.Format("{0:X2}", b));
-
 				if (b == CHAR_DLE) {
 					if (!inStuffedDLE) {
 						newData.Add(b);
@@ -141,7 +139,8 @@ namespace ThunderboltTimeSync {
 
 					// Check buffer length to ensure we've reached a plausible end of packet.
 					// 5 bytes is [DLE]<id><1 byte of data>[DLE][ETX]
-					if (currentByte == CHAR_ETX && packetBuffer.Count >= 5) {
+					// Must check if previous character is a [DLE], otherwise an ETX with a malformed and unstuffed [DLE] will cause issues
+					if (currentByte == CHAR_ETX && packetBuffer.Count >= 5 && packetBuffer[packetBuffer.Count - 2] == CHAR_DLE) {
 						int numberOfPrecedingDLEs = 0;
 
 						// Count number of DLEs, excluding the first two bytes (initial DLE and id)
