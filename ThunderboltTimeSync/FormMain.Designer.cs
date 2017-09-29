@@ -49,6 +49,7 @@
 			// 
 			// latestLogMessage
 			// 
+			this.latestLogMessage.ForeColor = System.Drawing.Color.Black;
 			this.latestLogMessage.Name = "latestLogMessage";
 			this.latestLogMessage.Size = new System.Drawing.Size(66, 17);
 			this.latestLogMessage.Text = "{RUNTIME}";

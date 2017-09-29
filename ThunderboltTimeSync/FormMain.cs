@@ -11,7 +11,7 @@ namespace ThunderboltTimeSync {
 	public partial class FormMain : Form {
 		private static readonly Dictionary<LogLevel, Color> LOG_LEVEL_TO_COLOR = new Dictionary<LogLevel, Color>() {
 			{ LogLevel.Info, Color.Black },
-			{ LogLevel.Warning, Color.Yellow },
+			{ LogLevel.Warning, Color.Orange },
 			{ LogLevel.Error, Color.Red }
 		};
 
@@ -38,18 +38,22 @@ namespace ThunderboltTimeSync {
 
 			timeProvider.TimeAvailable += (DateTime dateTime) => {
 				Invoke(new Action(() => {
-					labelTimestamps.Text += string.Format("{0} {1} @ {2}\n", dateTime.ToLongDateString(), dateTime.ToLongTimeString(), DateTime.Now.ToLongTimeString());
+					labelTimestamps.Text += string.Format("{0} {1}\n", dateTime.ToLongDateString(), dateTime.ToLongTimeString());
 				}));
 			};
 
 			timeProvider.Log += (string message, LogLevel logLevel) => {
 				Invoke(new Action(() => {
-					latestLogMessage.Text = message;
-					latestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
+					AddMessageToLog(message, logLevel);
 				}));
 			};
 
 			timeProvider.Start();
+		}
+
+		private void AddMessageToLog(string message, LogLevel logLevel) {
+			latestLogMessage.Text = string.Format("{0} ({1})", message, DateTime.Now.ToString("G"));
+			latestLogMessage.ForeColor = LOG_LEVEL_TO_COLOR[logLevel];
 		}
 
 		private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
