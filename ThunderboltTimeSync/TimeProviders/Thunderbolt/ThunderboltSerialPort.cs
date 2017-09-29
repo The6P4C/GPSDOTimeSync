@@ -153,56 +153,59 @@ namespace ThunderboltTimeSync.Devices.Thunderbolt {
 		// to bring the decoder back into sync with the true packets. It's probably only an issue when the Thunderbolt is initially plugged in,
 		// as that's probably the only time we'd see malformed packets on the serial port, since we could connect in the middle of a packet.
 		// Consider if this is really an issue, and think of a better way of decoding the packets to avoid this.
+		private void ProcessByte(byte b) {
+			// There aren't any packets this long, but during a corrupted or malformed packet the buffer can get quite large before the error
+			// is fixed somehow. To prevent the almost 20 second delay between time packets that can be caused by some malformed packets,
+			// just reset everything if the buffer's getting too long.
+			// We should make sure the user knows, so send a invalid packet to them.
+			if (packetBuffer.Count >= 128) {
+				packetBuffer.Clear();
+				inPacket = false;
+
+				PacketReceived?.Invoke(new ThunderboltPacket(false, 0, new List<byte>(), new List<byte>()));
+			}
+
+			if (inPacket) {
+				packetBuffer.Add(b);
+
+				// Check buffer length to ensure we've reached a plausible end of packet.
+				// 5 bytes is [DLE]<id><1 byte of data>[DLE][ETX]
+				// Must check if previous character is a [DLE], otherwise an ETX with a malformed and unstuffed [DLE] will cause issues
+				if (b == CHAR_ETX && packetBuffer.Count >= 5 && packetBuffer[packetBuffer.Count - 2] == CHAR_DLE) {
+					int numberOfPrecedingDLEs = 0;
+
+					// Count number of DLEs, excluding the first two bytes (initial DLE and id)
+					for (int i = 2; i < packetBuffer.Count; ++i) {
+						if (packetBuffer[i] == CHAR_DLE) {
+							++numberOfPrecedingDLEs;
+						}
+					}
+
+					// Odd number (greater than zero) of DLEs means the ETX does in fact signify the end of the packet
+					if (numberOfPrecedingDLEs % 2 == 1 && numberOfPrecedingDLEs > 0) {
+						ProcessPacket();
+
+						packetBuffer.Clear();
+						inPacket = false;
+					}
+				}
+			} else {
+				// A DLE received when not currently in a packet signifies the beginning of a packet
+				if (b == CHAR_DLE) {
+					packetBuffer.Add(b);
+
+					inPacket = true;
+				}
+			}
+		}
+
 		private void ReadSerialPort() {
 			while (running) {
 				int possibleCurrentByte = serialPort.ReadByte();
+
 				if (possibleCurrentByte != -1) {
-					// There aren't any packets this long, but during a corrupted or malformed packet the buffer can get quite large before the error
-					// is fixed somehow. To prevent the almost 20 second delay between time packets that can be caused by some malformed packets,
-					// just reset everything if the buffer's getting too long.
-					// We should make sure the user knows, so send a invalid packet to them.
-					if (packetBuffer.Count >= 128) {
-						packetBuffer.Clear();
-						inPacket = false;
-
-						PacketReceived?.Invoke(new ThunderboltPacket(false, 0, new List<byte>(), new List<byte>()));
-					}
-
 					// Once we're sure the byte that was read wasn't -1 (which signifies the end of the read), we're safe to cast to a byte
-					byte currentByte = (byte) possibleCurrentByte;
-
-					if (inPacket) {
-						packetBuffer.Add(currentByte);
-
-						// Check buffer length to ensure we've reached a plausible end of packet.
-						// 5 bytes is [DLE]<id><1 byte of data>[DLE][ETX]
-						// Must check if previous character is a [DLE], otherwise an ETX with a malformed and unstuffed [DLE] will cause issues
-						if (currentByte == CHAR_ETX && packetBuffer.Count >= 5 && packetBuffer[packetBuffer.Count - 2] == CHAR_DLE) {
-							int numberOfPrecedingDLEs = 0;
-
-							// Count number of DLEs, excluding the first two bytes (initial DLE and id)
-							for (int i = 2; i < packetBuffer.Count; ++i) {
-								if (packetBuffer[i] == CHAR_DLE) {
-									++numberOfPrecedingDLEs;
-								}
-							}
-
-							// Odd number (greater than zero) of DLEs means the ETX does in fact signify the end of the packet
-							if (numberOfPrecedingDLEs % 2 == 1 && numberOfPrecedingDLEs > 0) {
-								ProcessPacket();
-
-								packetBuffer.Clear();
-								inPacket = false;
-							}
-						}
-					} else {
-						// A DLE received when not currently in a packet signifies the beginning of a packet
-						if (currentByte == CHAR_DLE) {
-							packetBuffer.Add(currentByte);
-
-							inPacket = true;
-						}
-					}
+					ProcessByte((byte) possibleCurrentByte);
 				}
 			}
 		}
